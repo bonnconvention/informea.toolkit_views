@@ -41,7 +41,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
         AND LOWER(instr_name.title) IN ('eurobats');
 
 --
-CREATE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings_description` AS
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings_description` AS
     SELECT
         CONCAT(a.uuid, '-en') as id,
         a.uuid as meeting_id,
@@ -51,7 +51,7 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VI
     INNER JOIN field_data_field_meeting_description b ON a.nid = b.entity_id;
 
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings_title` AS
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings_title` AS
     SELECT
         CONCAT(a.uuid, '-en') as id,
         a.uuid as meeting_id,
@@ -80,24 +80,23 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
         a.uuid AS id,
         CONCAT('http://eurobats.eaudeweb.ro/node/', a.nid) AS link,
         b1.name AS `type`,
-        -- c1.name AS `status`,
+        c1.name AS `status`,
         d.field_document_number_value AS number,
         lower(e1.title) AS treaty,
         f.field_document_publish_date_value AS published,
-        -- date_format(from_unixtime(a.created),'%Y-%m-%d %H:%i:%s') AS updated,
-        NOW() AS updated,
+        date_format(from_unixtime(a.created),'%Y-%m-%d %H:%i:%s') AS updated,
         g.id_meeting AS meetingId,
         NULL AS meetingTitle,
         NULL AS meetingUrl
     FROM node a
         INNER JOIN field_data_field_document_type b ON b.entity_id = a.nid
         INNER JOIN taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-        -- INNER JOIN field_data_field_document_status c ON c.entity_id = a.nid
+        INNER JOIN field_data_field_document_status c ON c.entity_id = a.nid
         INNER JOIN taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
         INNER JOIN field_data_field_document_number d ON d.entity_id = a.nid
         INNER JOIN field_data_field_document_instrument e ON e.entity_id = a.nid
         INNER JOIN node e1 ON e.field_document_instrument_target_id = e1.nid
-        -- INNER JOIN field_data_field_document_publish_date f ON f.entity_id = a.nid
+        INNER JOIN field_data_field_document_publish_date f ON f.entity_id = a.nid
         INNER JOIN informea_decisions_cop_documents g ON g.id_document = a.nid
     WHERE
         a.`type`='document'
@@ -105,51 +104,72 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
         AND LOWER (e1.title) IN ('eurobats');
 
 --
-CREATE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_content` AS
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_content` AS
     SELECT
         NULL as id, NULL as decision_id, NULL as `language`, NULL as content
     LIMIT 0;
 
 --
-CREATE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_documents` AS
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_documents` AS
     SELECT
-        CONCAT(b.entity_id, '-', e.fid) as id,
-        b.entity_id as decision_id,
-        CONCAT('/var/local/eurobats/www/sites/default/files/', REPLACE(e.uri, 'public://', '')) as diskPath,
-        CONCAT('http://eurobats.eaudeweb.ro/sites/default/files/', REPLACE(e.uri, 'public://', '')) as url,
-        e.filemime as mimeType,
-        d.`language` as language,
-        e.filename as filename
-    FROM field_data_field_decision_document b
-    INNER JOIN field_data_field_document_files c ON c.entity_id = b.field_decision_document_target_id
-    INNER JOIN field_data_field_document_file d ON d.entity_id = c.field_document_files_value
-    INNER JOIN file_managed e ON e.fid = d.field_document_file_fid;
+        CONCAT(a.uuid, '-', f2.fid) AS id,
+        a.uuid AS decision_id,
+        CONCAT('/var/local/eurobats/www/sites/default/files/', REPLACE(f2.uri, 'public://', '')) as diskPath,
+        CONCAT('http://eurobats.eaudeweb.ro/sites/default/files/', REPLACE(f2.uri, 'public://', '')) as url,
+        f2.filemime as mimeType,
+        f1.`language` as language,
+        f2.filename as filename
+    FROM node a
+        INNER JOIN field_data_field_document_type b ON b.entity_id = a.nid
+        INNER JOIN taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
+        INNER JOIN field_data_field_document_status c ON c.entity_id = a.nid
+        INNER JOIN taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
+        INNER JOIN field_data_field_document_number d ON d.entity_id = a.nid
+        INNER JOIN field_data_field_document_instrument e ON e.entity_id = a.nid
+        INNER JOIN node e1 ON e.field_document_instrument_target_id = e1.nid
+        INNER JOIN field_data_field_document_files f ON f.entity_id = a.nid
+        INNER JOIN field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
+        INNER JOIN file_managed f2 ON f2.fid = f1.field_document_file_fid
+    WHERE
+        a.`type`='document'
+        AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
+        AND LOWER (e1.title) IN ('aewa')
+        AND f2.filename IN ('application/pdf', 'application/msword');
 
 --
-CREATE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_keywords` AS
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_keywords` AS
     SELECT
         NULL as id, NULL as decision_id, NULL as `namespace`, NULL as term
     LIMIT 0;
+
 --
-CREATE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_longtitle` AS
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_longtitle` AS
     SELECT
         NULL as id, NULL as decision_id, NULL as `language`, NULL as long_title
     LIMIT 0;
---
-CREATE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_summary` AS
-    SELECT
-        CONCAT(a.uuid, '-en') as id,
-        a.nid as decision_id,
-        'en' as `language`,
-        b.field_decision_summary_value as description
-    FROM node a
-    INNER JOIN field_data_field_decision_summary b ON a.nid = b.entity_id;
---
-CREATE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_title` AS
-SELECT
-CONCAT(a.nid, '-', 'en') as id,
-a.nid as decision_id,
-'en' as `language`,
-a.title as title
-FROM node a WHERE a.`type` = 'decision';
 
+--
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_summary` AS
+    SELECT
+        NULL AS id, NULL AS decision_id, NULL AS language, NULL AS summary
+    LIMIT 0;
+
+--
+  CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_title` AS
+    SELECT
+        CONCAT(a.uuid, '-', 'en') AS id,
+        a.uuid AS decision_id,
+        'en' AS `language`,
+        a.title AS title
+    FROM node a
+        INNER JOIN field_data_field_document_type b ON b.entity_id = a.nid
+        INNER JOIN taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
+        INNER JOIN field_data_field_document_status c ON c.entity_id = a.nid
+        INNER JOIN taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
+        INNER JOIN field_data_field_document_number d ON d.entity_id = a.nid
+        INNER JOIN field_data_field_document_instrument e ON e.entity_id = a.nid
+        INNER JOIN node e1 ON e.field_document_instrument_target_id = e1.nid
+    WHERE
+        a.`type`='document'
+        AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
+        AND LOWER (e1.title) IN ('eurobats');
