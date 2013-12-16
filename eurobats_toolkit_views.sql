@@ -133,8 +133,8 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
     WHERE
         a.`type`='document'
         AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
-        AND LOWER (e1.title) IN ('aewa')
-        AND f2.filename IN ('application/pdf', 'application/msword');
+        AND LOWER (e1.title) IN ('eurobats')
+        AND f2.filemime IN ('application/pdf', 'application/msword');
 
 --
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_keywords` AS
