@@ -3,7 +3,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
     SELECT
         a.uuid as id,
         LOWER(instr_name.title) AS treaty,
-        CONCAT('http://eurobats.eaudeweb.ro/node/', a.nid) as url,
+        'http://www.eurobats.org/official_documents/meeting_of_parties' as url,
         b.field_meeting_start_value as `start`,
         c.field_meeting_end_value as `end`,
         NULL as repetition,
@@ -78,7 +78,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions` AS
     SELECT
         a.uuid AS id,
-        CONCAT('http://eurobats.eaudeweb.ro/node/', a.nid) AS link,
+        'http://www.eurobats.org/official_documents/meeting_of_parties' AS link,
         b1.name AS `type`,
         c1.name AS `status`,
         d.field_document_number_value AS number,
