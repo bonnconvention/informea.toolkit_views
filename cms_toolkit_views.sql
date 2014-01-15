@@ -182,3 +182,33 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
         a.`type`='document'
         AND LOWER(b1.name) IN ('resolution', 'recommendation')
         AND LOWER (e1.title) IN ('cms');
+
+-- COUNTRY REPORTS (National Reports)
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_country_reports` AS
+    SELECT
+        a.uuid AS id,
+        'cms' AS treaty,
+        UPPER(h.field_country_iso3_value) AS country,
+        f.field_document_publish_date_value AS submission,
+        'http://www.cms.int/documents/national_reports/index_by_cop.htm' AS url,
+        date_format(from_unixtime(a.created),'%Y-%m-%d %H:%i:%s') AS updated
+    FROM node a
+        INNER JOIN field_data_field_document_type b ON b.entity_id = a.nid
+        INNER JOIN taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
+        INNER JOIN field_data_field_document_instrument e ON e.entity_id = a.nid
+        INNER JOIN node e1 ON e.field_document_instrument_target_id = e1.nid
+        INNER JOIN field_data_field_document_publish_date f ON f.entity_id = a.nid
+        INNER JOIN field_data_field_document_country g ON g.entity_id = a.nid
+        INNER JOIN field_data_field_country_iso3 h ON g.field_document_country_target_id = h.entity_id
+    WHERE
+        a.`type`='document'
+        AND LOWER(b1.name) = 'national report'
+        AND LOWER (e1.title) IN ('cms');
+
+CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_country_reports_title` AS
+    SELECT
+        CONCAT(a.uuid, '-en') as id,
+        a.uuid as country_report_id,
+        'en' as 'language',
+        a.title
+    FROM node a WHERE a.`type` = 'document';
