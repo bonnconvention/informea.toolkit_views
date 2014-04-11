@@ -67,7 +67,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         a.uuid AS meeting_id,
         'en' AS 'language',
         a.title
-    FROM node a WHERE a.`type` = 'meeting';
+    FROM `edw_ascobans_drupal`.node a WHERE a.`type` = 'meeting';
 
 
 -- DECISIONS
