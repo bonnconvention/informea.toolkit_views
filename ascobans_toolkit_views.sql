@@ -198,6 +198,8 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 -- COUNTRY REPORTS (National Reports)
 
 -- informea_country_reports
+--    449 = National report
+--    4   = ASCOBANS
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_country_reports` AS
     SELECT
         a.uuid AS id,
@@ -207,17 +209,13 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         CONCAT('http://www.ascobans.org/node/', a.nid) AS url,
         date_format(from_unixtime(a.created),'%Y-%m-%d %H:%i:%s') AS updated
     FROM `edw_ascobans_drupal`.node a
-        INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-        INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-        INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
-        INNER JOIN `edw_ascobans_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
+        INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type b ON (b.entity_id = a.nid AND b.field_document_type_tid = 449)
+        INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument e ON (e.entity_id = a.nid AND e.field_instrument_target_id = 4)
         INNER JOIN `edw_ascobans_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
         INNER JOIN `edw_ascobans_drupal`.field_data_field_country g ON g.entity_id = a.nid
         INNER JOIN `edw_ascobans_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
     WHERE
         a.`type`='document'
-        AND LOWER(b1.name) = 'national report'
-        AND LOWER (e1.title) IN ('aewa')
     GROUP BY a.uuid;
 
 
