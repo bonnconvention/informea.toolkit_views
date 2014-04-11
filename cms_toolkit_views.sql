@@ -4,15 +4,15 @@
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings` AS
     SELECT
         a.uuid AS id,
-        lcase(instr_name.title) AS treaty,
+        LOWER(instr_name.title) AS treaty,
         CONCAT('http://www.cms.int/node/', a.nid) AS url,
         b.field_meeting_start_value AS `start`,
         c.field_meeting_end_value AS `end`,
         NULL AS repetition,
-        lcase(d1.name) AS kind,
-        lcase(e1.name) AS `type`,
+        LOWER(d1.name) AS kind,
+        LOWER(e1.name) AS `type`,
         NULL AS access,
-        lcase(f1.name) AS `status`,
+        LOWER(f1.name) AS `status`,
         NULL AS imageUrl,
         NULL AS imageCopyright,
         g.field_meeting_location_value AS location,
@@ -41,8 +41,8 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         LEFT JOIN field_data_field_meeting_longitude k ON a.nid = k.entity_id
     WHERE
         a.`type` = 'meeting'
-        AND lcase(e1.name) IN ('cop', 'mop', 'scc', 'stc', 'technical meeting', 'negotiation meeting')
-        AND lcase(instr_name.title) = 'cms'
+        AND LOWER(e1.name) IN ('cop', 'mop', 'scc', 'stc', 'technical meeting', 'negotiation meeting')
+        AND LOWER(instr_name.title) = 'cms'
     GROUP BY a.uuid;
 
 
@@ -84,7 +84,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         INNER JOIN field_data_field_document_meeting h ON h.field_document_meeting_target_id = a.nid
     WHERE
         a.type = 'meeting'
-        AND lcase(g.name) IN ('cop', 'mop');
+        AND LOWER(g.name) IN ('cop', 'mop');
 
 
 -- informea_decisions
