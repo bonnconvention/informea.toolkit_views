@@ -75,7 +75,6 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 -- informea_decisions_cop_documents - Support view with COP meetings and their documents IDs
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_cop_documents` AS
     SELECT
-        h.entity_id AS id_document,
         a.uuid AS id_meeting,
         h.entity_id AS id_document
     FROM
