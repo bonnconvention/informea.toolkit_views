@@ -125,7 +125,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 
 
 -- informea_decisions_documents
-CREATE OR REPLACE VIEW informea_decisions_documents AS
+CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_documents` AS
     SELECT
         CONCAT(a.uuid, '-', f2.fid) AS id,
         a.uuid AS decision_id,
