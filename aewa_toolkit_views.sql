@@ -78,7 +78,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         a.uuid AS id_meeting,
         h.entity_id AS id_document
     FROM
-      `edw_aewa_drupal`.node a
+        `edw_aewa_drupal`.node a
         INNER JOIN `edw_aewa_drupal`.field_data_field_meeting_type f ON a.nid = f.entity_id
         INNER JOIN `edw_aewa_drupal`.taxonomy_term_data g ON f.field_meeting_type_tid = g.tid
         INNER JOIN `edw_aewa_drupal`.field_data_field_document_meeting h ON h.field_document_meeting_target_id = a.nid
