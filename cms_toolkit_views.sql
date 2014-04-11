@@ -49,10 +49,10 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 -- informea_meetings_description
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings_description` AS
     SELECT
-        CONCAT(a.uuid, '-en') as id,
-        a.uuid as meeting_id,
-        'en' as `language`,
-        b.body_value as description
+        CONCAT(a.uuid, '-en') AS id,
+        a.uuid AS meeting_id,
+        'en' AS `language`,
+        b.body_value AS description
     FROM node a
         INNER JOIN field_data_body b ON a.nid = b.entity_id
         WHERE
@@ -63,9 +63,9 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 -- informea_meetings_title
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings_title` AS
     SELECT
-        CONCAT(a.uuid, '-en') as id,
-        a.uuid as meeting_id,
-        'en' as 'language',
+        CONCAT(a.uuid, '-en') AS id,
+        a.uuid AS meeting_id,
+        'en' AS 'language',
         a.title
     FROM node a WHERE a.`type` = 'meeting';
 
@@ -120,7 +120,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 -- informea_decisions_content
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_content` AS
     SELECT
-        NULL as id, NULL as decision_id, NULL as `language`, NULL as content
+        NULL AS id, NULL AS decision_id, NULL AS `language`, NULL AS content
     LIMIT 0;
 
 
@@ -129,11 +129,11 @@ CREATE OR REPLACE VIEW informea_decisions_documents AS
     SELECT
         CONCAT(a.uuid, '-', f2.fid) AS id,
         a.uuid AS decision_id,
-        CONCAT('/var/local/cms/www/sites/default/files/', REPLACE(f2.uri, 'public://', '')) as diskPath,
-        CONCAT('http://www.cms.int/sites/default/files/', REPLACE(f2.uri, 'public://', '')) as url,
-        f2.filemime as mimeType,
-        f1.`language` as language,
-        f2.filename as filename
+        CONCAT('/var/local/cms/www/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS diskPath,
+        CONCAT('http://www.cms.int/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
+        f2.filemime AS mimeType,
+        f1.`language` AS language,
+        f2.filename AS filename
     FROM node a
         INNER JOIN field_data_field_document_type b ON b.entity_id = a.nid
         INNER JOIN taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
@@ -221,8 +221,8 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 -- informea_country_reports_title
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_country_reports_title` AS
     SELECT
-        CONCAT(a.uuid, '-en') as id,
-        a.uuid as country_report_id,
-        'en' as 'language',
+        CONCAT(a.uuid, '-en') AS id,
+        a.uuid AS country_report_id,
+        'en' AS 'language',
         a.title
     FROM node a WHERE a.`type` = 'document';

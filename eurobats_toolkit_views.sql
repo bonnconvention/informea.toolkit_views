@@ -1,24 +1,24 @@
 -- Meetings
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings` AS
     SELECT
-        a.uuid as id,
+        a.uuid AS id,
         LOWER(instr_name.title) AS treaty,
-        'http://www.eurobats.org/official_documents/meeting_of_parties' as url,
-        b.field_meeting_start_value as `start`,
-        c.field_meeting_end_value as `end`,
-        NULL as repetition,
-        LOWER(e.name) as `kind`,
-        LOWER(g.name) as `type`,
-        NULL as `access`,
-        LOWER(i.name) as `status`,
-        NULL as imageUrl,
-        NULL as imageCopyright,
-        j.field_meeting_location_value as `location`,
-        k.field_meeting_city_value as `city`,
-        n.field_country_iso2_value as `country`,
-        o.field_meeting_latitude_value as `latitude`,
-        p.field_meeting_longitude_value as `longitude`,
-        FROM_UNIXTIME(a.changed, '%Y-%m-%d %H:%i:%s') as updated
+        'http://www.eurobats.org/official_documents/meeting_of_parties' AS url,
+        b.field_meeting_start_value AS `start`,
+        c.field_meeting_end_value AS `end`,
+        NULL AS repetition,
+        LOWER(e.name) AS `kind`,
+        LOWER(g.name) AS `type`,
+        NULL AS `access`,
+        LOWER(i.name) AS `status`,
+        NULL AS imageUrl,
+        NULL AS imageCopyright,
+        j.field_meeting_location_value AS `location`,
+        k.field_meeting_city_value AS `city`,
+        n.field_country_iso2_value AS `country`,
+        o.field_meeting_latitude_value AS `latitude`,
+        p.field_meeting_longitude_value AS `longitude`,
+        FROM_UNIXTIME(a.changed, '%Y-%m-%d %H:%i:%s') AS updated
     FROM node a
     INNER JOIN field_data_field_meeting_instrument instr ON a.nid = instr.entity_id
     LEFT JOIN node instr_name ON instr.field_meeting_instrument_target_id = instr_name.nid
@@ -43,19 +43,19 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
 --
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings_description` AS
     SELECT
-        CONCAT(a.uuid, '-en') as id,
-        a.uuid as meeting_id,
-        'en' as `language`,
-        b.field_meeting_description_value as description
+        CONCAT(a.uuid, '-en') AS id,
+        a.uuid AS meeting_id,
+        'en' AS `language`,
+        b.field_meeting_description_value AS description
     FROM node a
     INNER JOIN field_data_field_meeting_description b ON a.nid = b.entity_id;
 
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_meetings_title` AS
     SELECT
-        CONCAT(a.uuid, '-en') as id,
-        a.uuid as meeting_id,
-        'en' as 'language',
+        CONCAT(a.uuid, '-en') AS id,
+        a.uuid AS meeting_id,
+        'en' AS 'language',
         a.title
     FROM node a WHERE a.`type` = 'meeting';
 
@@ -73,7 +73,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
         INNER JOIN field_data_field_document_meeting h ON h.field_document_meeting_target_id = a.nid
     WHERE
         a.type = 'meeting'
-        AND lcase(g.name) IN ('cop', 'mop');
+        AND LOWER(g.name) IN ('cop', 'mop');
 
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions` AS
     SELECT
@@ -106,7 +106,7 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
 --
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_content` AS
     SELECT
-        NULL as id, NULL as decision_id, NULL as `language`, NULL as content
+        NULL AS id, NULL AS decision_id, NULL AS `language`, NULL AS content
     LIMIT 0;
 
 --
@@ -114,11 +114,11 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
     SELECT
         CONCAT(a.uuid, '-', f2.fid) AS id,
         a.uuid AS decision_id,
-        CONCAT('/var/local/eurobats/www/sites/default/files/', REPLACE(f2.uri, 'public://', '')) as diskPath,
-        CONCAT('http://eurobats.eaudeweb.ro/sites/default/files/', REPLACE(f2.uri, 'public://', '')) as url,
-        f2.filemime as mimeType,
-        f1.`language` as language,
-        f2.filename as filename
+        CONCAT('/var/local/eurobats/www/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS diskPath,
+        CONCAT('http://eurobats.eaudeweb.ro/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
+        f2.filemime AS mimeType,
+        f1.`language` AS language,
+        f2.filename AS filename
     FROM node a
         INNER JOIN field_data_field_document_type b ON b.entity_id = a.nid
         INNER JOIN taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
@@ -139,13 +139,13 @@ CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY
 --
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_keywords` AS
     SELECT
-        NULL as id, NULL as decision_id, NULL as `namespace`, NULL as term
+        NULL AS id, NULL AS decision_id, NULL AS `namespace`, NULL AS term
     LIMIT 0;
 
 --
 CREATE OR REPLACE ALGORITHM=UNDEFINED DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_longtitle` AS
     SELECT
-        NULL as id, NULL as decision_id, NULL as `language`, NULL as long_title
+        NULL AS id, NULL AS decision_id, NULL AS `language`, NULL AS long_title
     LIMIT 0;
 
 --
