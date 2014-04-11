@@ -114,8 +114,8 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
     WHERE
         a.`type`='document'
         AND LOWER(b1.name) IN ('resolution', 'recommendation')
-        AND LOWER (e1.title) IN ('cms');
-
+        AND LOWER (e1.title) IN ('cms')
+    GROUP BY a.uuid;
 
 -- informea_decisions_content
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_content` AS
