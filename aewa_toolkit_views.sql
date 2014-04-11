@@ -42,7 +42,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
     WHERE
         a.`type` = 'meeting'
         AND lcase(e1.name) IN ('mop', 'stc', 'tc', 'symposium', 'recap')
-        AND lcase(instr_name.title) = 'aewa';
+        AND lcase(instr_name.title) = 'aewa'
     GROUP BY a.uuid;
 
 
