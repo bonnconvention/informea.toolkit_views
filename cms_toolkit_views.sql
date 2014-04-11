@@ -72,7 +72,6 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 
 -- DECISIONS
 
-
 -- informea_decisions_cop_documents - Support view with COP meetings and their documents IDs
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions_cop_documents` AS
     SELECT
@@ -203,7 +202,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         'cms' AS treaty,
         UPPER(h.field_country_iso3_value) AS country,
         f.field_document_publish_date_value AS submission,
-        'http://www.cms.int/documents/national_reports/index_by_cop.htm' AS url,
+        CONCAT('http://www.cms.int/node/', a.nid) AS url,
         date_format(from_unixtime(a.created),'%Y-%m-%d %H:%i:%s') AS updated
     FROM node a
         INNER JOIN field_data_field_document_type b ON b.entity_id = a.nid
