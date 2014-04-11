@@ -5,11 +5,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
     SELECT
         a.uuid AS id,
         lcase(instr_name.title) AS treaty,
-        CASE lcase(e1.name)
-            WHEN 'mop' THEN 'http://www.cms.int/bodies/cop_mainpage.htm'
-            WHEN 'cop' THEN 'http://www.cms.int/bodies/cop_mainpage.htm'
-            ELSE  'http://www.cms.int/news/events.htm'
-        END AS url,
+        CONCAT('http://www.cms.int/node/', a.nid) AS url,
         b.field_meeting_start_value AS `start`,
         c.field_meeting_end_value AS `end`,
         NULL AS repetition,
@@ -96,7 +92,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_decisions` AS
     SELECT
         a.uuid AS id,
-        CONCAT('http://cms.eaudeweb.ro/node/', a.nid) AS link,
+        CONCAT('http://www.cms.int/node/', a.nid) AS link,
         b1.name AS `type`,
         c1.name AS `status`,
         d.field_document_number_value AS number,
