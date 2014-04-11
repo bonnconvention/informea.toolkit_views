@@ -110,7 +110,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         INNER JOIN `edw_cms_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
         INNER JOIN `edw_cms_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
         INNER JOIN `edw_cms_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
-        INNER JOIN `edw_cms_drupal`.informea_decisions_cop_documents g ON g.id_document = a.nid
+        INNER JOIN informea_decisions_cop_documents g ON g.id_document = a.nid
     WHERE
         a.`type`='document'
         AND LOWER(b1.name) IN ('resolution', 'recommendation')
