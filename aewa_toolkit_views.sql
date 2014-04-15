@@ -212,8 +212,8 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
         INNER JOIN `edw_aewa_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
         INNER JOIN `edw_aewa_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
-        INNER JOIN `edw_aewa_drupal`.field_data_field_country g ON g.entity_id = a.nid
-        INNER JOIN `edw_aewa_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
+        INNER JOIN `edw_aewa_drupal`.field_data_field_country g ON (g.entity_id = a.nid AND g.bundle = 'document')
+        INNER JOIN `edw_aewa_drupal`.field_data_field_country_iso2 h ON g.field_country_target_id = h.entity_id
     WHERE
         a.`type`='document'
         AND LOWER(b1.name) = 'national report'
