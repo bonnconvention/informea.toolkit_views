@@ -93,7 +93,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         a.uuid AS id,
         CONCAT('http://www.ascobans.org/node/', a.nid) AS link,
         b1.name AS `type`,
-        c1.name AS `status`,
+        'active' AS `status`,
         d.field_document_number_value AS number,
         lower(e1.title) AS treaty,
         f.field_document_publish_date_value AS published,
@@ -115,6 +115,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         a.`type`='document'
         AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
         AND LOWER (e1.title) IN ('ascobans')
+        AND LOWER (c1.name) = 'extant'
     GROUP BY a.uuid;
 
 
