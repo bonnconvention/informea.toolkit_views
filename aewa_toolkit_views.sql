@@ -97,7 +97,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions` AS
   SELECT
     a.uuid                                                     AS id,
-    CONCAT('http://www.unep-eaudeweb.org/node/', a.nid)        AS link,
+    CONCAT('http://www.unep-aewa.org/node/', a.nid)        AS link,
     b1.name                                                    AS `type`,
     c1.name                                                    AS `status`,
     d.field_document_number_value                              AS number,
