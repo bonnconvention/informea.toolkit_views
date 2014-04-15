@@ -36,7 +36,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
     LEFT JOIN `edw_cms_drupal`.taxonomy_term_data f1 ON f.field_meeting_status_tid = f1.tid
     LEFT JOIN `edw_cms_drupal`.field_revision_field_meeting_location g ON a.nid = g.entity_id
     LEFT JOIN `edw_cms_drupal`.field_data_field_meeting_city h ON a.nid = h.entity_id
-    INNER JOIN `edw_cms_drupal`.field_data_field_country i ON a.nid = i.entity_id
+    INNER JOIN `edw_cms_drupal`.field_data_field_country i ON (i.entity_id = a.nid AND i.bundle = 'meeting')
     INNER JOIN `edw_cms_drupal`.field_data_field_country_iso2 i1 ON i.field_country_target_id = i1.entity_id
     LEFT JOIN `edw_cms_drupal`.field_data_field_meeting_latitude j ON a.nid = j.entity_id
     LEFT JOIN `edw_cms_drupal`.field_data_field_meeting_longitude k ON a.nid = k.entity_id
