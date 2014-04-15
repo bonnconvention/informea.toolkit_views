@@ -211,7 +211,7 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
         INNER JOIN field_data_field_instrument e ON e.entity_id = a.nid
         INNER JOIN node e1 ON e.field_instrument_target_id = e1.nid
         INNER JOIN field_data_field_document_publish_date f ON f.entity_id = a.nid
-        INNER JOIN field_data_field_country g ON g.entity_id = a.nid
+        INNER JOIN field_data_field_country g ON (g.entity_id = a.nid AND g.bundle = 'document')
         INNER JOIN field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
     WHERE
         a.`type`='document'
@@ -221,9 +221,9 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 
 -- informea_country_reports_title
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_country_reports_title` AS
-    SELECT
-        CONCAT(a.uuid, '-en') AS id,
-        a.uuid AS country_report_id,
-        'en' AS 'language',
-        a.title
-    FROM node a WHERE a.`type` = 'document';
+  SELECT
+    CONCAT(id, '-en') AS id,
+    id AS country_report_id,
+    'en' AS 'language',
+    b.title
+  FROM informea_country_reports a INNER JOIN `edw_eurobats_drupal`.node b ON a.id = b.uuid;
