@@ -223,8 +223,8 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
 -- informea_country_reports_title
 CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `informea_country_reports_title` AS
     SELECT
-        CONCAT(a.uuid, '-en') AS id,
-        a.uuid AS country_report_id,
+        CONCAT(id, '-en') AS id,
+        id AS country_report_id,
         'en' AS 'language',
-        a.title
-    FROM `edw_aewa_drupal`.node a WHERE a.`type` = 'document';
+        b.title
+    FROM informea_country_reports a INNER JOIN `edw_aewa_drupal`.node b ON a.id = b.uuid;
