@@ -185,15 +185,9 @@ CREATE OR REPLACE DEFINER=`edw_www`@`localhost` SQL SECURITY DEFINER VIEW `infor
     FROM `edw_ascobans_drupal`.node a
         INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
         INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-        INNER JOIN `edw_ascobans_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
-        INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
-        INNER JOIN `edw_ascobans_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
-        INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
-        INNER JOIN `edw_ascobans_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
     WHERE
         a.`type`='document'
-        AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
-        AND LOWER (e1.title) IN ('aewa');
+        AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision');
 
 
 -- COUNTRY REPORTS (National Reports)
