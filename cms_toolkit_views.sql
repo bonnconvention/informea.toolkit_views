@@ -1,7 +1,7 @@
 -- Meetings
 
 -- informea_meetings
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_meetings` AS
   SELECT
     a.uuid                                                     AS id,
@@ -48,7 +48,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_meetings_description
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_meetings_description` AS
   SELECT
     CONCAT(a.uuid, '-en') AS id,
@@ -63,7 +63,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_meetings_title
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_meetings_title` AS
   SELECT
     CONCAT(a.uuid, '-en') AS id,
@@ -77,7 +77,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 -- DECISIONS
 
 -- informea_decisions_cop_documents - Support view with COP meetings and their documents IDs
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_cop_documents` AS
   SELECT
     a.uuid      AS id_meeting,
@@ -93,12 +93,15 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions` AS
   SELECT
     a.uuid                                                     AS id,
     CONCAT('http://www.cms.int/node/', a.nid)                  AS link,
-    b1.name                                                    AS `type`,
+    CASE b1.name WHEN 'resolutions' THEN 'resolution'
+      WHEN 'recommendations' THEN 'recommendation'
+      ELSE 'decision'
+    END                                                        AS `type`,
     c1.name                                                    AS `status`,
     d.field_document_number_value                              AS number,
     lower(e1.title)                                            AS treaty,
@@ -119,12 +122,12 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
     INNER JOIN informea_decisions_cop_documents g ON g.id_document = a.nid
   WHERE
     a.`type` = 'document'
-    AND LOWER(b1.name) IN ('resolution', 'recommendation')
+    AND LOWER(b1.name) IN ('resolutions', 'recommendations')
     AND LOWER(e1.title) IN ('cms')
   GROUP BY a.uuid;
 
 -- informea_decisions_content
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_content` AS
   SELECT
     NULL AS id,
@@ -135,7 +138,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_documents
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_documents` AS
   SELECT
     CONCAT(a.uuid, '-', f2.fid)                                                         AS id,
@@ -163,7 +166,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_keywords
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_keywords` AS
   SELECT
     NULL AS id,
@@ -174,7 +177,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_longtitle
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_longtitle` AS
   SELECT
     NULL AS id,
@@ -185,7 +188,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_summary
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_summary` AS
   SELECT
     NULL AS id,
@@ -196,7 +199,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_title
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_title` AS
   SELECT
     CONCAT(a.uuid, '-', 'en') AS id,
@@ -220,7 +223,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 -- COUNTRY REPORTS (National Reports)
 
 -- informea_country_reports
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_country_reports` AS
   SELECT
     a.uuid                                                     AS id,
@@ -244,7 +247,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
   GROUP BY a.uuid;
 
 -- informea_country_reports_title
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_country_reports_title` AS
   SELECT
     CONCAT(id, '-en') AS id,

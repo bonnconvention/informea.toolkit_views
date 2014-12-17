@@ -1,7 +1,7 @@
 -- Meetings
 
 -- informea_meetings
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_meetings` AS
   SELECT
     a.uuid                                                     AS id,
@@ -36,19 +36,18 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
     LEFT JOIN `edw_ascobans_drupal`.taxonomy_term_data f1 ON f.field_meeting_status_tid = f1.tid
     LEFT JOIN `edw_ascobans_drupal`.field_revision_field_meeting_location g ON a.nid = g.entity_id
     LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_city h ON a.nid = h.entity_id
-    INNER JOIN `edw_ascobans_drupal`.field_data_field_country i ON (i.entity_id = a.nid AND i.bundle = 'meetings')
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_country i ON i.entity_id = a.nid
     INNER JOIN `edw_ascobans_drupal`.field_data_field_country_iso2 i1 ON i.field_country_target_id = i1.entity_id
     LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_latitude j ON a.nid = j.entity_id
     LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_longitude k ON a.nid = k.entity_id
   WHERE
     a.`type` = 'meeting'
     AND LOWER(e1.name) IN ('mop', 'cop')
-    AND LOWER(instr_name.title) = 'ascobans'
   GROUP BY a.uuid;
 
 
 -- informea_meetings_description
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_meetings_description` AS
   SELECT
     CONCAT(a.uuid, '-en') AS id,
@@ -63,7 +62,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_meetings_title
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_meetings_title` AS
   SELECT
     CONCAT(a.uuid, '-en') AS id,
@@ -77,7 +76,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 -- DECISIONS
 
 -- informea_decisions_cop_documents - Support view with COP meetings and their documents IDs
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_cop_documents` AS
   SELECT
     a.uuid      AS id_meeting,
@@ -93,12 +92,15 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions` AS
   SELECT
     a.uuid                                                     AS id,
     CONCAT('http://www.ascobans.org/node/', a.nid)             AS link,
-    b1.name                                                    AS `type`,
+    CASE b1.name WHEN 'resolutions' THEN 'resolution'
+      WHEN 'recommendations' THEN 'recommendation'
+      ELSE 'decision'
+    END                                                        AS `type`,
     'active'                                                   AS `status`,
     d.field_document_number_value                              AS number,
     lower(e1.title)                                            AS treaty,
@@ -119,14 +121,13 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
     INNER JOIN informea_decisions_cop_documents g ON g.id_document = a.nid
   WHERE
     a.`type` = 'document'
-    AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
-    AND LOWER(e1.title) IN ('ascobans')
+    AND LOWER(b1.name) IN ('resolutions', 'recommendations', 'decisions')
     AND LOWER(c1.name) = 'extant'
   GROUP BY a.uuid;
 
 
 -- informea_decisions_content
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_content` AS
   SELECT
     NULL AS id,
@@ -137,7 +138,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_documents
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_documents` AS
   SELECT
     CONCAT(a.uuid, '-', f2.fid)                                                              AS id,
@@ -166,7 +167,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_keywords
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_keywords` AS
   SELECT
     NULL AS id,
@@ -177,7 +178,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_longtitle
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_longtitle` AS
   SELECT
     NULL AS id,
@@ -188,7 +189,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_summary
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_summary` AS
   SELECT
     NULL AS id,
@@ -199,7 +200,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_decisions_title
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_decisions_title` AS
   SELECT
     CONCAT(a.uuid, '-', 'en') AS id,
@@ -219,7 +220,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 -- informea_country_reports
 --    449 = National report
 --    4   = ASCOBANS
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_country_reports` AS
   SELECT
     a.uuid                                                     AS id,
@@ -242,7 +243,7 @@ CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
 
 
 -- informea_country_reports_title
-CREATE OR REPLACE DEFINER =`edw_www`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_ascobans_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_country_reports_title` AS
   SELECT
     CONCAT(id, '-en') AS id,
