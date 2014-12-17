@@ -228,7 +228,7 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
   SELECT
     a.uuid                                                     AS id,
     'aewa'                                                     AS treaty,
-    UPPER(h.field_country_iso3_value)                          AS country,
+    UPPER(h.field_country_iso2_value)                          AS country,
     f.field_document_publish_date_value                        AS submission,
     CONCAT('http://www.unep-aewa.org/node/', a.nid)            AS url,
     date_format(from_unixtime(a.created), '%Y-%m-%d %H:%i:%s') AS updated
