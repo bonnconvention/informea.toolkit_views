@@ -23,23 +23,23 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     k.field_meeting_longitude_value                            AS `longitude`,
     date_format(from_unixtime(a.changed), '%Y-%m-%d %H:%i:%s') AS updated
   FROM
-    `edw_ascob_drupal`.node a
-    INNER JOIN `edw_ascob_drupal`.field_data_field_instrument instr ON a.nid = instr.entity_id
-    LEFT JOIN `edw_ascob_drupal`.node instr_name ON instr.field_instrument_target_id = instr_name.nid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_meeting_start b ON a.nid = b.entity_id
-    LEFT JOIN `edw_ascob_drupal`.field_data_field_meeting_end c ON a.nid = c.entity_id
-    LEFT JOIN `edw_ascob_drupal`.field_data_field_meeting_kind d ON a.nid = d.entity_id
-    LEFT JOIN `edw_ascob_drupal`.taxonomy_term_data d1 ON d.field_meeting_kind_tid = d1.tid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_meeting_type e ON a.nid = e.entity_id
-    INNER JOIN `edw_ascob_drupal`.taxonomy_term_data e1 ON e.field_meeting_type_tid = e1.tid
-    LEFT JOIN `edw_ascob_drupal`.field_data_field_meeting_status f ON a.nid = f.entity_id
-    LEFT JOIN `edw_ascob_drupal`.taxonomy_term_data f1 ON f.field_meeting_status_tid = f1.tid
-    LEFT JOIN `edw_ascob_drupal`.field_revision_field_meeting_location g ON a.nid = g.entity_id
-    LEFT JOIN `edw_ascob_drupal`.field_data_field_meeting_city h ON a.nid = h.entity_id
-    INNER JOIN `edw_ascob_drupal`.field_data_field_country i ON i.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_country_iso2 i1 ON i.field_country_target_id = i1.entity_id
-    LEFT JOIN `edw_ascob_drupal`.field_data_field_meeting_latitude j ON a.nid = j.entity_id
-    LEFT JOIN `edw_ascob_drupal`.field_data_field_meeting_longitude k ON a.nid = k.entity_id
+    `edw_ascobans_drupal`.node a
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument instr ON a.nid = instr.entity_id
+    LEFT JOIN `edw_ascobans_drupal`.node instr_name ON instr.field_instrument_target_id = instr_name.nid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_meeting_start b ON a.nid = b.entity_id
+    LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_end c ON a.nid = c.entity_id
+    LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_kind d ON a.nid = d.entity_id
+    LEFT JOIN `edw_ascobans_drupal`.taxonomy_term_data d1 ON d.field_meeting_kind_tid = d1.tid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_meeting_type e ON a.nid = e.entity_id
+    INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data e1 ON e.field_meeting_type_tid = e1.tid
+    LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_status f ON a.nid = f.entity_id
+    LEFT JOIN `edw_ascobans_drupal`.taxonomy_term_data f1 ON f.field_meeting_status_tid = f1.tid
+    LEFT JOIN `edw_ascobans_drupal`.field_revision_field_meeting_location g ON a.nid = g.entity_id
+    LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_city h ON a.nid = h.entity_id
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_country i ON i.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_country_iso2 i1 ON i.field_country_target_id = i1.entity_id
+    LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_latitude j ON a.nid = j.entity_id
+    LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_longitude k ON a.nid = k.entity_id
   WHERE
     a.`type` = 'meeting'
     AND LOWER(e1.name) IN ('mop', 'cop')
@@ -54,8 +54,8 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     a.uuid                AS meeting_id,
     'en'                  AS `language`,
     b.body_value          AS description
-  FROM `edw_ascob_drupal`.node a
-    INNER JOIN `edw_ascob_drupal`.field_data_body b ON a.nid = b.entity_id
+  FROM `edw_ascobans_drupal`.node a
+    INNER JOIN `edw_ascobans_drupal`.field_data_body b ON a.nid = b.entity_id
   WHERE
     b.body_value IS NOT NULL
     AND TRIM(b.body_value) <> '';
@@ -69,7 +69,7 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     a.uuid                AS meeting_id,
     'en'                  AS 'language',
     a.title
-  FROM `edw_ascob_drupal`.node a
+  FROM `edw_ascobans_drupal`.node a
   WHERE a.`type` = 'meeting';
 
 
@@ -82,10 +82,10 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     a.uuid      AS id_meeting,
     h.entity_id AS id_document
   FROM
-    `edw_ascob_drupal`.node a
-    INNER JOIN `edw_ascob_drupal`.field_data_field_meeting_type f ON a.nid = f.entity_id
-    INNER JOIN `edw_ascob_drupal`.taxonomy_term_data g ON f.field_meeting_type_tid = g.tid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_meeting h ON h.field_document_meeting_target_id = a.nid
+    `edw_ascobans_drupal`.node a
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_meeting_type f ON a.nid = f.entity_id
+    INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data g ON f.field_meeting_type_tid = g.tid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_meeting h ON h.field_document_meeting_target_id = a.nid
   WHERE
     a.type = 'meeting'
     AND LOWER(g.name) IN ('cop', 'mop');
@@ -109,15 +109,15 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     g.id_meeting                                               AS meetingId,
     NULL                                                       AS meetingTitle,
     NULL                                                       AS meetingUrl
-  FROM `edw_ascob_drupal`.node a
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
+  FROM `edw_ascobans_drupal`.node a
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
     INNER JOIN informea_decisions_cop_documents g ON g.id_document = a.nid
   WHERE
     a.`type` = 'document'
@@ -148,17 +148,17 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     f2.filemime                                                                              AS mimeType,
     f1.`language`                                                                            AS language,
     f2.filename                                                                              AS filename
-  FROM `edw_ascob_drupal`.node a
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_files f ON f.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
-    INNER JOIN `edw_ascob_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
+  FROM `edw_ascobans_drupal`.node a
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_files f ON f.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
+    INNER JOIN `edw_ascobans_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
   WHERE
     a.`type` = 'document'
     AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
@@ -207,9 +207,9 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     a.uuid                    AS decision_id,
     'en'                      AS `language`,
     a.title                   AS title
-  FROM `edw_ascob_drupal`.node a
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
+  FROM `edw_ascobans_drupal`.node a
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
   WHERE
     a.`type` = 'document'
     AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision');
@@ -229,14 +229,14 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     f.field_document_publish_date_value                        AS submission,
     CONCAT('http://www.ascobans.org/node/', a.nid)             AS url,
     date_format(from_unixtime(a.created), '%Y-%m-%d %H:%i:%s') AS updated
-  FROM `edw_ascob_drupal`.node a
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_type b
+  FROM `edw_ascobans_drupal`.node a
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type b
       ON (b.entity_id = a.nid AND b.field_document_type_tid = 449)
-    INNER JOIN `edw_ascob_drupal`.field_data_field_instrument e
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument e
       ON (e.entity_id = a.nid AND e.field_instrument_target_id = 4)
-    INNER JOIN `edw_ascob_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
-    INNER JOIN `edw_ascob_drupal`.field_data_field_country g ON (g.entity_id = a.nid AND g.bundle = 'document')
-    INNER JOIN `edw_ascob_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_country g ON (g.entity_id = a.nid AND g.bundle = 'document')
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
   WHERE
     a.`type` = 'document'
   GROUP BY a.uuid;
@@ -250,4 +250,4 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     id                AS country_report_id,
     'en'              AS 'language',
     b.title
-  FROM informea_country_reports a INNER JOIN `edw_ascob_drupal`.node b ON a.id = b.uuid;
+  FROM informea_country_reports a INNER JOIN `edw_ascobans_drupal`.node b ON a.id = b.uuid;
