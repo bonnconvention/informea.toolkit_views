@@ -102,7 +102,7 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
       WHEN 'recommendations' THEN 'recommendation'
       ELSE 'decision'
     END                                                        AS `type`,
-    c1.name                                                    AS `status`,
+    'Adopted'                                                  AS `status`,
     d.field_document_number_value                              AS number,
     lower(e1.title)                                            AS treaty,
     f.field_document_publish_date_value                        AS published,
@@ -113,8 +113,6 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   FROM `edw_cms_drupal`.node a
     INNER JOIN `edw_cms_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-    INNER JOIN `edw_cms_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
-    INNER JOIN `edw_cms_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
     INNER JOIN `edw_cms_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
@@ -122,7 +120,7 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
     INNER JOIN informea_decisions_cop_documents g ON g.id_document = a.nid
   WHERE
     a.`type` = 'document'
-    AND LOWER(b1.name) IN ('resolutions', 'recommendations')
+    AND LOWER(b1.name) IN ('resolution', 'resolutions', 'recommendation', 'recommendations')
     AND LOWER(e1.title) IN ('cms')
   GROUP BY a.uuid;
 
@@ -143,7 +141,7 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   SELECT
     CONCAT(a.uuid, '-', f2.fid)                                                         AS id,
     a.uuid                                                                              AS decision_id,
-    CONCAT('/var/local/cms/www/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS diskPath,
+    CONCAT('/var/local/cms/docroot/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS diskPath,
     CONCAT('http://www.cms.int/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
     f2.filemime                                                                         AS mimeType,
     f1.`language`                                                                       AS language,
@@ -151,8 +149,6 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   FROM `edw_cms_drupal`.node a
     INNER JOIN `edw_cms_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-    INNER JOIN `edw_cms_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
-    INNER JOIN `edw_cms_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
     INNER JOIN `edw_cms_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
@@ -161,7 +157,7 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
     INNER JOIN `edw_cms_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
   WHERE
     a.`type` = 'document'
-    AND LOWER(b1.name) IN ('resolution', 'recommendation')
+    AND LOWER(b1.name) IN ('resolution', 'resolutions', 'recommendation', 'recommendations')
     AND LOWER(e1.title) IN ('cms');
 
 
@@ -209,14 +205,12 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   FROM `edw_cms_drupal`.node a
     INNER JOIN `edw_cms_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-    INNER JOIN `edw_cms_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
-    INNER JOIN `edw_cms_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
     INNER JOIN `edw_cms_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
   WHERE
     a.`type` = 'document'
-    AND LOWER(b1.name) IN ('resolution', 'recommendation')
+    AND LOWER(b1.name) IN ('resolution', 'resolutions', 'recommendation', 'recommendations')
     AND LOWER(e1.title) IN ('cms');
 
 
@@ -242,7 +236,7 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
     INNER JOIN `edw_cms_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
   WHERE
     a.`type` = 'document'
-    AND LOWER(b1.name) = 'national report'
+    AND LOWER(b1.name) IN ('national report', 'national reports')
     AND LOWER(e1.title) IN ('cms')
   GROUP BY a.uuid;
 
