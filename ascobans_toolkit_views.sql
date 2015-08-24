@@ -241,6 +241,32 @@ CREATE OR REPLACE DEFINER =`root`@`localhost`
     a.`type` = 'document'
   GROUP BY a.uuid;
 
+-- informea_country_reports_documents
+CREATE OR REPLACE DEFINER =`root`@`localhost`
+  SQL SECURITY DEFINER VIEW `informea_country_reports_documents` AS
+  SELECT
+    CONCAT('en', '-', n.nid) AS id,
+    n.uuid AS country_report_id,
+    CONCAT('sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS diskPath,
+    CONCAT('http://www.ascobans.org/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
+    f2.filemime AS mimeType,
+    CASE f1.`language` WHEN 'und' THEN 'en'
+      ELSE f1.`language`
+    END                                                        AS `language`,
+    f2.filename AS filename
+  FROM `edw_ascobans_drupal`.node n
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type dt ON n.nid = dt.entity_id
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_files f ON f.entity_id = n.nid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
+    INNER JOIN `edw_ascobans_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument e ON (e.entity_id = n.nid AND e.field_instrument_target_id = 4)
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_country g ON (g.entity_id = n.nid AND g.bundle = 'document')
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
+  WHERE
+    n.type ='document'
+    AND n.status = 1
+    AND dt.field_document_type_tid = 449
+    GROUP BY f2.fid;
 
 -- informea_country_reports_title
 CREATE OR REPLACE DEFINER =`root`@`localhost`
