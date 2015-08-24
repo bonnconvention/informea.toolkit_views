@@ -44,6 +44,7 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
     a.`type` = 'meeting'
     AND LOWER(e1.name) IN ('cop', 'mop', 'scc', 'stc', 'technical meeting', 'negotiation meeting')
     AND LOWER(instr_name.title) = 'cms'
+    AND (b.field_meeting_start_value IS NOT NULL OR b.field_meeting_start_value <> '')
   GROUP BY a.uuid;
 
 

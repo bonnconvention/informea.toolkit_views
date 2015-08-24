@@ -43,6 +43,7 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
   WHERE
     a.`type` = 'meeting'
     AND LOWER(e1.name) IN ('mop', 'cop')
+    AND (b.field_meeting_start_value IS NOT NULL OR b.field_meeting_start_value <> '')
   GROUP BY a.uuid;
 
 

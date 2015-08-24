@@ -1,7 +1,7 @@
 -- Meetings
 
 -- informea_meetings
-CREATE OR REPLACE DEFINER =`root`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_meetings` AS
   SELECT
     a.uuid                                                     AS id,
@@ -44,6 +44,7 @@ CREATE OR REPLACE DEFINER =`root`@`localhost`
     a.`type` = 'meeting'
     AND LOWER(e1.name) IN ('mop', 'stc', 'tc', 'symposium', 'recap')
     AND LOWER(instr_name.title) = 'aewa'
+    AND (b.field_meeting_start_value IS NOT NULL OR b.field_meeting_start_value <> '')
   GROUP BY a.uuid;
 
 
