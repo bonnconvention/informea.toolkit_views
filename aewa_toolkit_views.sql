@@ -7,8 +7,8 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
     a.uuid                                                     AS id,
     LOWER(instr_name.title)                                    AS treaty,
     CONCAT('http://www.unep-aewa.org/node/', a.nid)            AS url,
-    b.field_meeting_start_value                                AS `start`,
-    c.field_meeting_end_value                                  AS `end`,
+    b.event_calendar_date_value                                AS `start`,
+    b.event_calendar_date_value2                               AS `end`,
     NULL                                                       AS repetition,
     LOWER(d1.name)                                             AS kind,
     LOWER(e1.name)                                             AS `type`,
@@ -26,8 +26,7 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
     `edw_aewa_drupal`.node a
     INNER JOIN `edw_aewa_drupal`.field_data_field_instrument instr ON a.nid = instr.entity_id
     LEFT JOIN `edw_aewa_drupal`.node instr_name ON instr.field_instrument_target_id = instr_name.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_meeting_start b ON a.nid = b.entity_id
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_meeting_end c ON a.nid = c.entity_id
+    INNER JOIN `edw_aewa_drupal`.field_data_event_calendar_date b ON a.nid = b.entity_id
     LEFT JOIN `edw_aewa_drupal`.field_data_field_meeting_kind d ON a.nid = d.entity_id
     LEFT JOIN `edw_aewa_drupal`.taxonomy_term_data d1 ON d.field_meeting_kind_tid = d1.tid
     INNER JOIN `edw_aewa_drupal`.field_data_field_meeting_type e ON a.nid = e.entity_id
