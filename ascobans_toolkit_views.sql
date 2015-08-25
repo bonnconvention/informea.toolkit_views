@@ -40,7 +40,7 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_latitude j ON a.nid = j.entity_id
     LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_longitude k ON a.nid = k.entity_id
   WHERE
-    a.`status` = 1
+    a.status = 1
     AND a.`type` = 'meeting'
     AND (b.event_calendar_date_value IS NOT NULL OR b.event_calendar_date_value <> '')
   GROUP BY a.uuid;
@@ -57,7 +57,8 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
   FROM `edw_ascobans_drupal`.node a
     INNER JOIN `edw_ascobans_drupal`.field_data_body b ON a.nid = b.entity_id
   WHERE
-    b.body_value IS NOT NULL
+    a.status = 1
+    AND b.body_value IS NOT NULL
     AND TRIM(b.body_value) <> '';
 
 
@@ -70,7 +71,9 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     'en'                  AS 'language',
     a.title
   FROM `edw_ascobans_drupal`.node a
-  WHERE a.`type` = 'meeting';
+  WHERE
+    a.status = 1
+    AND a.`type` = 'meeting';
 
 
 -- DECISIONS
@@ -87,7 +90,8 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data g ON f.field_meeting_type_tid = g.tid
     INNER JOIN `edw_ascobans_drupal`.field_data_field_document_meeting h ON h.field_document_meeting_target_id = a.nid
   WHERE
-    a.type = 'meeting'
+    a.status = 1
+    AND a.type = 'meeting'
     AND LOWER(g.name) IN ('cop', 'mop');
 
 
@@ -120,11 +124,11 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     INNER JOIN `edw_ascobans_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
     INNER JOIN informea_decisions_cop_documents g ON g.id_document = a.nid
   WHERE
-    a.`type` = 'document'
+    a.status = 1
+    AND a.`type` = 'document'
     AND LOWER(b1.name) IN ('resolutions', 'recommendations', 'decisions')
     AND LOWER(c1.name) = 'extant'
   GROUP BY a.uuid;
-
 
 -- informea_decisions_content
 CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
@@ -135,7 +139,6 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     NULL AS `language`,
     NULL AS content
   LIMIT 0;
-
 
 -- informea_decisions_documents
 CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
@@ -160,7 +163,8 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     INNER JOIN `edw_ascobans_drupal`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
     INNER JOIN `edw_ascobans_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
   WHERE
-    a.`type` = 'document'
+    a.status = 1
+    AND a.`type` = 'document'
     AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
     AND LOWER(e1.title) IN ('ascobans')
     AND f2.filemime IN ('application/pdf', 'application/msword');
@@ -211,7 +215,8 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
     INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
   WHERE
-    a.`type` = 'document'
+    a.status = 1
+    AND a.`type` = 'document'
     AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision');
 
 
@@ -245,8 +250,8 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
 CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_country_reports_documents` AS
   SELECT
-    CONCAT('en', '-', n.nid) AS id,
-    n.uuid AS country_report_id,
+    CONCAT('en', '-', a.nid) AS id,
+    a.uuid AS country_report_id,
     CONCAT('sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS diskPath,
     CONCAT('http://www.ascobans.org/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
     f2.filemime AS mimeType,
@@ -254,17 +259,17 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
       ELSE f1.`language`
     END                                                        AS `language`,
     f2.filename AS filename
-  FROM `edw_ascobans_drupal`.node n
-    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type dt ON n.nid = dt.entity_id
-    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_files f ON f.entity_id = n.nid
+  FROM `edw_ascobans_drupal`.node a
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type dt ON a.nid = dt.entity_id
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_document_files f ON f.entity_id = a.nid
     INNER JOIN `edw_ascobans_drupal`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
     INNER JOIN `edw_ascobans_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
-    INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument e ON (e.entity_id = n.nid AND e.field_instrument_target_id = 4)
-    INNER JOIN `edw_ascobans_drupal`.field_data_field_country g ON (g.entity_id = n.nid AND g.bundle = 'document')
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument e ON (e.entity_id = a.nid AND e.field_instrument_target_id = 4)
+    INNER JOIN `edw_ascobans_drupal`.field_data_field_country g ON (g.entity_id = a.nid AND g.bundle = 'document')
     INNER JOIN `edw_ascobans_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
   WHERE
-    n.type ='document'
-    AND n.status = 1
+    a.status = 1
+    AND a.type ='document'
     AND dt.field_document_type_tid = 449
     GROUP BY f2.fid;
 
