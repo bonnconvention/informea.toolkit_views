@@ -7,8 +7,8 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     a.uuid                                                     AS id,
     LOWER(instr_name.title)                                    AS treaty,
     CONCAT('http://www.ascobans.org/node/', a.nid)             AS url,
-    b.field_meeting_start_value                                AS `start`,
-    c.field_meeting_end_value                                  AS `end`,
+    b.event_calendar_date_value                                AS `start`,
+    b.event_calendar_date_value2                               AS `end`,
     NULL                                                       AS repetition,
     LOWER(d1.name)                                             AS kind,
     LOWER(e1.name)                                             AS `type`,
@@ -26,8 +26,7 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     `edw_ascobans_drupal`.node a
     INNER JOIN `edw_ascobans_drupal`.field_data_field_instrument instr ON a.nid = instr.entity_id
     LEFT JOIN `edw_ascobans_drupal`.node instr_name ON instr.field_instrument_target_id = instr_name.nid
-    INNER JOIN `edw_ascobans_drupal`.field_data_field_meeting_start b ON a.nid = b.entity_id
-    LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_end c ON a.nid = c.entity_id
+    INNER JOIN `edw_ascobans_drupal`.field_data_event_calendar_date b ON a.nid = b.entity_id
     LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_kind d ON a.nid = d.entity_id
     LEFT JOIN `edw_ascobans_drupal`.taxonomy_term_data d1 ON d.field_meeting_kind_tid = d1.tid
     INNER JOIN `edw_ascobans_drupal`.field_data_field_meeting_type e ON a.nid = e.entity_id
@@ -41,9 +40,9 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_latitude j ON a.nid = j.entity_id
     LEFT JOIN `edw_ascobans_drupal`.field_data_field_meeting_longitude k ON a.nid = k.entity_id
   WHERE
-    a.`type` = 'meeting'
-    AND LOWER(e1.name) IN ('mop', 'cop')
-    AND (b.field_meeting_start_value IS NOT NULL OR b.field_meeting_start_value <> '')
+    a.`status` = 1
+    AND a.`type` = 'meeting'
+    AND (b.event_calendar_date_value IS NOT NULL OR b.event_calendar_date_value <> '')
   GROUP BY a.uuid;
 
 
