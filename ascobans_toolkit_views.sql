@@ -165,7 +165,7 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
   WHERE
     a.status = 1
     AND a.`type` = 'document'
-    AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
+    AND LOWER(b1.name) IN ('resolutions', 'resolution', 'recommendation', 'recommendations', 'decision', 'decisions')
     AND LOWER(e1.title) IN ('ascobans')
     AND f2.filemime IN ('application/pdf', 'application/msword');
 
