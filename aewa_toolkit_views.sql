@@ -149,7 +149,7 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
     CONCAT('/var/local/aewa/www/sites/default/files/', REPLACE(f2.uri, 'public://', ''))      AS diskPath,
     CONCAT('http://www.unep-aewa.org/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
     f2.filemime                                                                               AS mimeType,
-    f1.`language`                                                                             AS language,
+    f1.`language`                                                                             AS `language`,
     f2.filename                                                                               AS filename
   FROM `edw_aewa_drupal`.node a
     INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
@@ -164,10 +164,9 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
     INNER JOIN `edw_aewa_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
   WHERE
     a.status = 1
-    AND a.`type` = 'document'
-    AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision')
+    AND a.`type` = 'document'    AND LOWER(b1.name) IN ('resolution', 'resolutions', 'recommendation', 'decision')
     AND LOWER(e1.title) IN ('aewa')
-    AND f2.filename IN ('application/pdf', 'application/msword');
+    AND f2.filemime IN ('application/pdf', 'application/msword');
 
 -- informea_decisions_keywords
 CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
