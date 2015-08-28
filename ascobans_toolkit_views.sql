@@ -216,8 +216,7 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
   WHERE
     a.status = 1
-    AND a.`type` = 'document'
-    AND LOWER(b1.name) IN ('resolution', 'recommendation', 'decision');
+    AND a.`type` = 'document';
 
 
 -- COUNTRY REPORTS (National Reports)
