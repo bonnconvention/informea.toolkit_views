@@ -217,3 +217,63 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
   WHERE
     a.status = 1
     AND a.`type` = 'document';
+
+-- COUNTRY REPORTS (National Reports)
+
+-- informea_country_reports
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
+  SQL SECURITY DEFINER VIEW `informea_country_reports` AS
+  SELECT
+    a.uuid                                                     AS id,
+    'aewa'                                                      AS treaty,
+    UPPER(h.field_country_iso3_value)                          AS country,
+    f.field_document_publish_date_value                        AS submission,
+    CONCAT('http://www.unep-aewa.org/node/', a.nid)                  AS url,
+    date_format(from_unixtime(a.created), '%Y-%m-%d %H:%i:%s') AS updated
+  FROM `edw_aewa_drupal`.node a
+    INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
+    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
+    INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
+    INNER JOIN `edw_aewa_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
+    INNER JOIN `edw_aewa_drupal`.field_data_field_country g ON (g.entity_id = a.nid AND g.bundle = 'document')
+    INNER JOIN `edw_aewa_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
+  WHERE
+    a.`type` = 'document'
+    AND LOWER(b1.name) IN ('national report', 'national reports')
+  GROUP BY a.uuid;
+
+-- informea_country_reports_documents
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
+  SQL SECURITY DEFINER VIEW `informea_country_reports_documents` AS
+  SELECT
+    CONCAT('en', '-', n.nid) AS id,
+    n.uuid AS country_report_id,
+    CONCAT('sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS diskPath,
+    CONCAT('http://www.unep-aewa.org/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
+    f2.filemime AS mimeType,
+    CASE f1.`language` WHEN 'und' THEN 'en'
+      ELSE f1.`language`
+    END                                                        AS `language`,
+    f2.filename AS filename
+  FROM `edw_aewa_drupal`.node n
+    INNER JOIN `edw_aewa_drupal`.field_data_field_document_type dt ON n.nid = dt.entity_id
+    INNER JOIN `edw_aewa_drupal`.field_data_field_document_files f ON f.entity_id = n.nid
+    INNER JOIN `edw_aewa_drupal`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
+    INNER JOIN `edw_aewa_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
+    INNER JOIN `edw_aewa_drupal`.field_data_field_country g ON (g.entity_id = n.nid AND g.bundle = 'document')
+    INNER JOIN `edw_aewa_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
+  WHERE
+    n.type ='document'
+    AND n.status = 1
+    AND dt.field_document_type_tid = 1336
+    GROUP BY f2.fid;
+
+-- informea_country_reports_title
+CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
+  SQL SECURITY DEFINER VIEW `informea_country_reports_title` AS
+  SELECT
+    CONCAT(id, '-en') AS id,
+    id                AS country_report_id,
+    'en'              AS 'language',
+    b.title
+  FROM informea_country_reports a INNER JOIN `edw_aewa_drupal`.node b ON a.id = b.uuid;
