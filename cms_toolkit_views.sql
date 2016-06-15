@@ -305,7 +305,7 @@ CREATE OR REPLACE VIEW informea_treaty_machine_name AS
       NULL
     END treaty,
     title
-  FROM node
+  FROM `edw_cms_drupal`.node
   WHERE `type` = 'legal_instrument';
 
 --
@@ -322,14 +322,14 @@ CREATE OR REPLACE VIEW informea_documents AS
     0 displayOrder,
     UPPER(ciso.field_country_iso3_value) country,
     node.nid
-  FROM node node
-    LEFT JOIN field_data_field_publication_published_date pdate ON node.nid = pdate.entity_id
-    INNER JOIN field_data_field_instrument instr ON node.nid = instr.entity_id
+  FROM `edw_cms_drupal`.node node
+    LEFT JOIN `edw_cms_drupal`.field_data_field_publication_published_date pdate ON node.nid = pdate.entity_id
+    INNER JOIN `edw_cms_drupal`.field_data_field_instrument instr ON node.nid = instr.entity_id
     INNER JOIN informea_treaty_machine_name treaty ON treaty.nid = instr.field_instrument_target_id
-    LEFT JOIN field_data_field_publication_image img ON node.nid = img.entity_id
-    LEFT JOIN file_managed thumbnails ON field_publication_image_fid = thumbnails.fid
-    LEFT JOIN field_data_field_country country ON country.entity_id = node.nid
-    LEFT JOIN field_data_field_country_iso3 ciso ON country.field_country_target_id = ciso.entity_id
+    LEFT JOIN `edw_cms_drupal`.field_data_field_publication_image img ON node.nid = img.entity_id
+    LEFT JOIN `edw_cms_drupal`.file_managed thumbnails ON field_publication_image_fid = thumbnails.fid
+    LEFT JOIN `edw_cms_drupal`.field_data_field_country country ON country.entity_id = node.nid
+    LEFT JOIN `edw_cms_drupal`.field_data_field_country_iso3 ciso ON country.field_country_target_id = ciso.entity_id
   WHERE
     treaty IS NOT NULL
     AND node.type = 'publication'
@@ -355,8 +355,8 @@ CREATE OR REPLACE VIEW informea_documents_types AS
       tb.name
     END `value`
   FROM informea_documents a
-    INNER JOIN field_data_field_publication_type b ON a.nid = b.entity_id
-    INNER JOIN taxonomy_term_data tb ON b.field_publication_type_tid = tb.tid
+    INNER JOIN `edw_cms_drupal`.field_data_field_publication_type b ON a.nid = b.entity_id
+    INNER JOIN `edw_cms_drupal`.taxonomy_term_data tb ON b.field_publication_type_tid = tb.tid
   WHERE tb.tid IN (1684, 1662, 1942, 229, 226, 224, 230, 223) ORDER BY document_id;
 
 --
@@ -369,8 +369,8 @@ CREATE OR REPLACE VIEW informea_documents_authors AS
     NULL `type`,
     tb.name
   FROM informea_documents a
-    INNER JOIN field_data_field_publication_author b ON a.nid = b.entity_id
-    INNER JOIN taxonomy_term_data tb ON tb.tid = b.field_publication_author_tid;
+    INNER JOIN `edw_cms_drupal`.field_data_field_publication_author b ON a.nid = b.entity_id
+    INNER JOIN `edw_cms_drupal`.taxonomy_term_data tb ON tb.tid = b.field_publication_author_tid;
 
 --
 -- Documents `keywords` navigation property
@@ -395,7 +395,7 @@ CREATE OR REPLACE VIEW informea_documents_titles AS
     CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END `language`,
     b.title_field_value `value`
   FROM informea_documents a
-    INNER JOIN field_data_title_field b ON a.nid = b.entity_id
+    INNER JOIN `edw_cms_drupal`.field_data_title_field b ON a.nid = b.entity_id
   GROUP BY CONCAT(a.nid, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END);
 
 --
@@ -408,7 +408,7 @@ CREATE OR REPLACE VIEW informea_documents_descriptions AS
     CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END `language`,
     b.body_value `value`
   FROM informea_documents a
-    INNER JOIN field_data_body b ON a.nid = b.entity_id
+    INNER JOIN `edw_cms_drupal`.field_data_body b ON a.nid = b.entity_id
   GROUP BY CONCAT(a.id, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END);
 
 --
@@ -436,8 +436,8 @@ CREATE OR REPLACE VIEW informea_documents_files AS
     CASE WHEN f.language = 'und' THEN 'en' ELSE f.language END `language`,
     files.filename
   FROM informea_documents a
-    INNER JOIN field_data_field_publication_attachment f ON a.nid = f.entity_id
-    INNER JOIN file_managed files ON f.field_publication_attachment_fid = files.fid
+    INNER JOIN `edw_cms_drupal`.field_data_field_publication_attachment f ON a.nid = f.entity_id
+    INNER JOIN `edw_cms_drupal`.file_managed files ON f.field_publication_attachment_fid = files.fid
   GROUP BY files.fid;
 
 --
@@ -464,9 +464,9 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
       'meeting' AS type, a.id AS document_id,
       NULL AS refURI
     FROM
-      cms.informea_documents a
-      JOIN cms.field_data_field_publication_meeting b ON a.nid = b.entity_id
-      JOIN cms.node bn ON (b.field_publication_meeting_target_id = bn.nid AND bn.type = 'meeting')
+      informea_documents a
+      JOIN `edw_cms_drupal`.field_data_field_publication_meeting b ON a.nid = b.entity_id
+      JOIN `edw_cms_drupal`.node bn ON (b.field_publication_meeting_target_id = bn.nid AND bn.type = 'meeting')
     GROUP BY bn.nid
   UNION
     SELECT
@@ -475,9 +475,9 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
       a.id AS document_id,
       NULL AS refURI
     FROM
-      cms.informea_documents a
-      JOIN cms.field_data_field_publication_plans b ON a.nid = b.entity_id
-      JOIN cms.node bn ON (b.field_publication_plans_target_id = bn.nid and (bn.type = 'document'))
+      informea_documents a
+      JOIN `edw_cms_drupal`.field_data_field_publication_plans b ON a.nid = b.entity_id
+      JOIN `edw_cms_drupal`.node bn ON (b.field_publication_plans_target_id = bn.nid and (bn.type = 'document'))
     GROUP BY bn.nid
   UNION
     SELECT
@@ -486,8 +486,7 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
       a.id AS document_id,
       NULL AS refURI
     FROM
-      cms.informea_documents a
-      JOIN cms.field_data_field_publication_nat_report b ON a.nid = b.entity_id
-    JOIN
-      cms.node bn ON (b.field_publication_nat_report_target_id = bn.nid AND bn.type = 'document')
+      informea_documents a
+      JOIN `edw_cms_drupal`.field_data_field_publication_nat_report b ON a.nid = b.entity_id
+      JOIN `edw_cms_drupal`.node bn ON (b.field_publication_nat_report_target_id = bn.nid AND bn.type = 'document')
     GROUP BY bn.nid;
