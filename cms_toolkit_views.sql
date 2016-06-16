@@ -318,7 +318,7 @@ CREATE OR REPLACE VIEW informea_documents AS
     CONVERT(field_publication_published_date_timestamp, DATE) AS published,
     FROM_UNIXTIME(node.changed) updated,
     treaty.treaty,
-    REPLACE(thumbnails.uri, 'public://', 'http://www.cms.int/sites/default/files') thumbnailUrl,
+    REPLACE(thumbnails.uri, 'public://', 'http://www.cms.int/sites/default/files/') thumbnailUrl,
     0 displayOrder,
     UPPER(ciso.field_country_iso3_value) country,
     node.nid
