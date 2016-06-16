@@ -462,7 +462,7 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
   SELECT
       CONCAT('meeting-', a.nid, '-', bn.nid) AS id,
       'meeting' AS type, a.id AS document_id,
-      NULL AS refURI
+      NULL AS refId
     FROM
       informea_documents a
       JOIN `edw_cms_drupal`.field_data_field_publication_meeting b ON a.nid = b.entity_id
@@ -473,7 +473,7 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
         CONCAT('NationalPlans-', a.nid, '-', bn.nid) AS id,
       'NationalPlans' AS type,
       a.id AS document_id,
-      NULL AS refURI
+      NULL AS refId
     FROM
       informea_documents a
       JOIN `edw_cms_drupal`.field_data_field_publication_plans b ON a.nid = b.entity_id
@@ -484,7 +484,7 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
       concat('CountryReports-', a.nid, '-', bn.nid) AS id,
       'CountryReports' AS type,
       a.id AS document_id,
-      NULL AS refURI
+      NULL AS refId
     FROM
       informea_documents a
       JOIN `edw_cms_drupal`.field_data_field_publication_nat_report b ON a.nid = b.entity_id
