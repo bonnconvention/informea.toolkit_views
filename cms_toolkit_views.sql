@@ -105,7 +105,8 @@ CREATE OR REPLACE VIEW `informea_decisions` AS
     g.id_meeting                                               AS meetingId,
     NULL                                                       AS meetingTitle,
     NULL                                                       AS meetingUrl,
-    dg.weight                                                  AS displayOrder
+    dg.weight                                                  AS displayOrder,
+    a.nid
   FROM `edw_cms_drupal`.node a
     INNER JOIN `edw_cms_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
@@ -159,12 +160,14 @@ CREATE OR REPLACE VIEW `informea_decisions_documents` AS
 -- informea_decisions_keywords
 CREATE OR REPLACE VIEW `informea_decisions_keywords` AS
   SELECT
-    NULL AS id,
-    NULL AS decision_id,
-    NULL AS `namespace`,
-    NULL AS term
-  LIMIT 0;
-
+    CONCAT(a.id, '-', td.tid) AS id,
+    a.id decision_id,
+    'http://www.informea.org/terms' AS `namespace`,
+    td.name AS term
+  FROM informea_decisions a
+    INNER JOIN `edw_cms_drupal`.field_data_field_cms_tags tags ON tags.entity_id = a.nid
+    INNER JOIN `edw_cms_drupal`.field_data_field_related_informea_terms itags ON tags.field_cms_tags_tid = itags.entity_id
+    INNER JOIN `edw_cms_drupal`.taxonomy_term_data td ON itags.field_related_informea_terms_target_id = td.tid;
 
 -- informea_decisions_longtitle
 CREATE OR REPLACE VIEW `informea_decisions_longtitle` AS
