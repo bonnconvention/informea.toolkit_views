@@ -381,9 +381,11 @@ CREATE OR REPLACE VIEW informea_documents_authors AS
 CREATE OR REPLACE VIEW informea_documents_keywords AS
   SELECT
     CONCAT(a.id, '-', td.tid) AS id,
-    a.id decision_id,
-    'http://www.informea.org/terms' AS `namespace`,
-    td.name AS term
+    a.id document_id,
+    'http://www.informea.org/terms' AS `termURI`,
+    'leo' AS scope,
+    td.name AS literalForm,
+    'http://www.informea.org/terms' AS sourceURL
   FROM informea_documents a
     INNER JOIN `edw_cms_drupal`.field_data_field_cms_tags tags ON tags.entity_id = a.nid
     INNER JOIN `edw_cms_drupal`.field_data_field_related_informea_terms itags ON tags.field_cms_tags_tid = itags.entity_id
