@@ -328,7 +328,7 @@ CREATE OR REPLACE VIEW informea_documents AS
   FROM `edw_cms_drupal`.node node
     LEFT JOIN `edw_cms_drupal`.field_data_field_publication_published_date pdate ON node.nid = pdate.entity_id
     INNER JOIN `edw_cms_drupal`.field_data_field_instrument instr ON node.nid = instr.entity_id
-    INNER JOIN informea_treaty_machine_name treaty ON treaty.nid = instr.field_instrument_target_id
+    INNER JOIN informea_treaty_machine_name treaty ON (treaty.nid = instr.field_instrument_target_id AND instr.entity_type = 'node')
     LEFT JOIN `edw_cms_drupal`.field_data_field_publication_image img ON node.nid = img.entity_id
     LEFT JOIN `edw_cms_drupal`.file_managed thumbnails ON field_publication_image_fid = thumbnails.fid
     LEFT JOIN `edw_cms_drupal`.field_data_field_country country ON country.entity_id = node.nid
