@@ -380,13 +380,14 @@ CREATE OR REPLACE VIEW informea_documents_authors AS
 --
 CREATE OR REPLACE VIEW informea_documents_keywords AS
   SELECT
-    NULL id,
-    NULL document_id,
-    NULL termURI,
-    NULL scope,
-    NULL literalForm,
-    NULL sourceURL
-  FROM DUAL;
+    CONCAT(a.id, '-', td.tid) AS id,
+    a.id decision_id,
+    'http://www.informea.org/terms' AS `namespace`,
+    td.name AS term
+  FROM informea_documents a
+    INNER JOIN `edw_cms_drupal`.field_data_field_cms_tags tags ON tags.entity_id = a.nid
+    INNER JOIN `edw_cms_drupal`.field_data_field_related_informea_terms itags ON tags.field_cms_tags_tid = itags.entity_id
+    INNER JOIN `edw_cms_drupal`.taxonomy_term_data td ON itags.field_related_informea_terms_target_id = td.tid;
 
 --
 -- Documents `titles` navigation property
