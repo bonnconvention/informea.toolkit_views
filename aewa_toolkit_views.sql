@@ -221,7 +221,7 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
 -- COUNTRY REPORTS (National Reports)
 
 -- informea_country_reports
-CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_country_reports` AS
   SELECT
     a.uuid                                                     AS id,
@@ -243,7 +243,7 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
   GROUP BY a.uuid;
 
 -- informea_country_reports_documents
-CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_country_reports_documents` AS
   SELECT
     CONCAT('en', '-', n.nid) AS id,
@@ -269,7 +269,7 @@ CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
     GROUP BY f2.fid;
 
 -- informea_country_reports_title
-CREATE OR REPLACE DEFINER =`edw_cms_drupal`@`localhost`
+CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
   SQL SECURITY DEFINER VIEW `informea_country_reports_title` AS
   SELECT
     CONCAT(id, '-en') AS id,
