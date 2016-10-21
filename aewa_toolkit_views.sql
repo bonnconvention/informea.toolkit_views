@@ -277,3 +277,209 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
     'en'              AS 'language',
     b.title
   FROM informea_country_reports a INNER JOIN `edw_aewa_drupal`.node b ON a.id = b.uuid;
+
+
+-- Document schema
+CREATE OR REPLACE VIEW informea_treaty_machine_name AS
+  SELECT
+    nid,
+    uuid,
+    CASE
+    WHEN nid = 1 THEN 'cms'
+    WHEN nid = 2 THEN 'aewa'
+    WHEN nid = 3 THEN 'eurobats'
+    WHEN nid = 4 THEN 'ascobans'
+    ELSE
+      NULL
+    END treaty,
+    title
+  FROM `edw_aewa_drupal`.node
+  WHERE `type` = 'legal_instrument' AND node.nid IN (1, 2, 3, 4);
+
+--
+-- Document entity view
+--
+CREATE OR REPLACE VIEW informea_documents AS
+  SELECT
+    1 schemaVersion,
+    node.uuid id,
+    CONVERT(field_publication_published_date_timestamp, DATE) AS published,
+    FROM_UNIXTIME(node.changed) updated,
+    treaty.treaty,
+    REPLACE(thumbnails.uri, 'public://', 'http://www.unep-aewa.org/sites/default/files/') thumbnailUrl,
+    0 displayOrder,
+    UPPER(ciso.field_country_iso3_value) country,
+    node.nid
+  FROM `edw_aewa_drupal`.node node
+    LEFT JOIN `edw_aewa_drupal`.field_data_field_publication_published_date pdate ON node.nid = pdate.entity_id
+    INNER JOIN `edw_aewa_drupal`.field_data_field_instrument instr ON node.nid = instr.entity_id
+    INNER JOIN informea_treaty_machine_name treaty ON (treaty.nid = instr.field_instrument_target_id AND instr.entity_type = 'node')
+    LEFT JOIN `edw_aewa_drupal`.field_data_field_publication_image img ON node.nid = img.entity_id
+    LEFT JOIN `edw_aewa_drupal`.file_managed thumbnails ON field_publication_image_fid = thumbnails.fid
+    LEFT JOIN `edw_aewa_drupal`.field_data_field_country country ON country.entity_id = node.nid
+    LEFT JOIN `edw_aewa_drupal`.field_data_field_country_iso3 ciso ON country.field_country_target_id = ciso.entity_id
+  WHERE
+    treaty IS NOT NULL
+    AND node.type = 'publication'
+    AND node.status = 1
+  GROUP BY node.nid;
+
+
+--
+-- Documents `type` navigation property
+--
+CREATE OR REPLACE VIEW informea_documents_types AS
+  SELECT
+    CONCAT(a.id, '-', 'publication') AS id,
+    a.id document_id,
+    'Publication' `value`
+  FROM informea_documents a
+  UNION
+  SELECT
+    CONCAT(a.id, '-', tb.tid) AS id,
+    a.id document_id,
+    CASE
+    WHEN tb.tid = 1942 THEN 'Factsheet'
+    WHEN tb.tid = 229 THEN 'Guidance'
+    ELSE
+      tb.name
+    END `value`
+  FROM informea_documents a
+    INNER JOIN `edw_aewa_drupal`.field_data_field_publication_type b ON a.nid = b.entity_id
+    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data tb ON b.field_publication_type_tid = tb.tid
+  WHERE tb.tid IN (223, 224, 226, 369) ORDER BY document_id;
+
+--
+-- Documents `authors` navigation property
+--
+CREATE OR REPLACE VIEW informea_documents_authors AS
+  SELECT
+    CONCAT(a.nid, '-', tb.tid) id,
+    a.id document_id,
+    NULL `type`,
+    tb.name
+  FROM informea_documents a
+    INNER JOIN `edw_aewa_drupal`.field_data_field_publication_author b ON a.nid = b.entity_id
+    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data tb ON tb.tid = b.field_publication_author_tid;
+
+--
+-- Documents `keywords` navigation property
+--
+CREATE OR REPLACE VIEW informea_documents_keywords AS
+  SELECT
+    CONCAT(a.id, '-', td.tid) AS id,
+    a.id document_id,
+    'http://www.informea.org/terms' AS `termURI`,
+    'leo' AS scope,
+    td.name AS literalForm,
+    'http://www.informea.org/terms' AS sourceURL
+  FROM informea_documents a
+    INNER JOIN `edw_aewa_drupal`.field_data_field_cms_tags tags ON tags.entity_id = a.nid
+    INNER JOIN `edw_aewa_drupal`.field_data_field_related_informea_terms itags ON tags.field_cms_tags_tid = itags.entity_id
+    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data td ON itags.field_related_informea_terms_target_id = td.tid;
+
+--
+-- Documents `titles` navigation property
+--
+CREATE OR REPLACE VIEW informea_documents_titles AS
+  SELECT
+    CONCAT(a.nid, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END) id,
+    a.id document_id,
+    CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END `language`,
+    b.title_field_value `value`
+  FROM informea_documents a
+    INNER JOIN `edw_aewa_drupal`.field_data_title_field b ON a.nid = b.entity_id
+  GROUP BY CONCAT(a.nid, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END);
+
+--
+-- Documents `descriptions` navigation property
+--
+CREATE OR REPLACE VIEW informea_documents_descriptions AS
+  SELECT
+    CONCAT(a.id, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END) AS id,
+    a.id document_id,
+    CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END `language`,
+    b.body_value `value`
+  FROM informea_documents a
+    INNER JOIN `edw_aewa_drupal`.field_data_body b ON a.nid = b.entity_id
+  GROUP BY CONCAT(a.id, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END);
+
+--
+-- Documents `identifiers` navigation property
+-- @todo
+--
+CREATE OR REPLACE VIEW informea_documents_identifiers AS
+  SELECT
+    NULL id,
+    NULL document_id,
+    NULL name,
+    NULL value
+  FROM DUAL;
+
+--
+-- Documents `files` navigation property
+--
+CREATE OR REPLACE VIEW informea_documents_files AS
+  SELECT
+    files.fid id,
+    a.id document_id,
+    REPLACE(files.uri, 'public://', 'http://www.unep-aewa.org/sites/default/files/') url,
+    NULL content,
+    files.filemime AS mimeType,
+    CASE WHEN f.language = 'und' THEN 'en' ELSE f.language END `language`,
+    files.filename
+  FROM informea_documents a
+    INNER JOIN `edw_aewa_drupal`.field_data_field_publication_attachment f ON a.nid = f.entity_id
+    INNER JOIN `edw_aewa_drupal`.file_managed files ON f.field_publication_attachment_fid = files.fid
+  GROUP BY files.fid;
+
+--
+-- Documents `tags` navigation property
+-- @todo:
+--
+CREATE OR REPLACE VIEW informea_documents_tags AS
+  SELECT
+    NULL id,
+    NULL document_id,
+    NULL language,
+    NULL scope,
+    NULL value,
+    NULL comment
+  FROM DUAL;
+
+--
+-- Documents `referenceToEntities` navigation property
+-- @todo:
+--
+CREATE OR REPLACE VIEW `informea_documents_references` AS
+  SELECT
+      CONCAT('meeting-', a.nid, '-', bn.nid) AS id,
+      'meeting' AS type, a.id AS document_id,
+      NULL AS refId
+    FROM
+      informea_documents a
+      JOIN `edw_aewa_drupal`.field_data_field_publication_meeting b ON a.nid = b.entity_id
+      JOIN `edw_aewa_drupal`.node bn ON (b.field_publication_meeting_target_id = bn.nid AND bn.type = 'meeting')
+    GROUP BY bn.nid
+  UNION
+    SELECT
+        CONCAT('NationalPlans-', a.nid, '-', bn.nid) AS id,
+      'NationalPlans' AS type,
+      a.id AS document_id,
+      NULL AS refId
+    FROM
+      informea_documents a
+      JOIN `edw_aewa_drupal`.field_data_field_publication_plans b ON a.nid = b.entity_id
+      JOIN `edw_aewa_drupal`.node bn ON (b.field_publication_plans_target_id = bn.nid and (bn.type = 'document'))
+    GROUP BY bn.nid
+  UNION
+    SELECT
+      concat('CountryReports-', a.nid, '-', bn.nid) AS id,
+      'CountryReports' AS type,
+      a.id AS document_id,
+      NULL AS refId
+    FROM
+      informea_documents a
+      JOIN `edw_aewa_drupal`.field_data_field_publication_nat_report b ON a.nid = b.entity_id
+      JOIN `edw_aewa_drupal`.node bn ON (b.field_publication_nat_report_target_id = bn.nid AND bn.type = 'document')
+    GROUP BY bn.nid;
