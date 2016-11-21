@@ -278,8 +278,9 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
     b.title
   FROM informea_country_reports a INNER JOIN `edw_aewa_drupal`.node b ON a.id = b.uuid;
 
-
+--
 -- Document schema
+--
 CREATE OR REPLACE VIEW informea_treaty_machine_name AS
   SELECT
     nid,
