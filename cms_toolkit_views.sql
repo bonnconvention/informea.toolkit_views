@@ -382,14 +382,15 @@ CREATE OR REPLACE VIEW informea_documents_keywords AS
   SELECT
     CONCAT(a.id, '-', td.tid) AS id,
     a.id document_id,
-    'http://www.informea.org/terms' AS `termURI`,
+    turi.field_taxonomy_term_uri_url AS `termURI`,
     'leo' AS scope,
     td.name AS literalForm,
     'http://www.informea.org/terms' AS sourceURL
   FROM informea_documents a
     INNER JOIN `edw_cms_drupal`.field_data_field_cms_tags tags ON tags.entity_id = a.nid
-    INNER JOIN `edw_cms_drupal`.field_data_field_related_informea_terms itags ON tags.field_cms_tags_tid = itags.entity_id
-    INNER JOIN `edw_cms_drupal`.taxonomy_term_data td ON itags.field_related_informea_terms_target_id = td.tid;
+    INNER JOIN `edw_cms_drupal`.field_data_field_term_reference_url refs ON tags.field_cms_tags_tid = refs.entity_id
+    INNER JOIN `edw_cms_drupal`.field_data_field_taxonomy_term_uri turi ON refs.field_term_reference_url_value = turi.field_taxonomy_term_uri_url
+    INNER JOIN `edw_cms_drupal`.taxonomy_term_data td ON turi.entity_id = td.tid;
 
 --
 -- Documents `titles` navigation property
