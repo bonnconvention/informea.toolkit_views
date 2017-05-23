@@ -523,7 +523,7 @@ CREATE OR REPLACE VIEW `informea_contacts` AS
 -- informea_contacts_treaties
 CREATE OR REPLACE VIEW `informea_contacts_treaties` AS
   SELECT
-    CONCAT(id, '-cms'),
+    CONCAT(id, '-cms') as id,
     id AS contact_id,
     'cms' AS treaty
   FROM `informea_contacts`;
