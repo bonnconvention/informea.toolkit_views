@@ -497,3 +497,33 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
       JOIN `edw_cms_drupal`.field_data_field_publication_nat_report b ON a.nid = b.entity_id
       JOIN `edw_cms_drupal`.node bn ON (b.field_publication_nat_report_target_id = bn.nid AND bn.type = 'document')
     GROUP BY bn.nid;
+
+
+-- CONTACTS (Focal Points)
+CREATE OR REPLACE DEFINER =`informea`@`localhost` SQL SECURITY DEFINER VIEW `informea_contacts` AS
+  SELECT
+    dn AS id,
+    country_post_iso2 AS country,
+    '' AS prefix,
+    first_name AS firstName,
+    last_name AS lastName,
+    position AS `position`,
+    organization AS institution,
+    '' AS department,
+    '' AS `type`,
+    address AS address,
+    work_email AS email,
+    telephone AS phoneNumber,
+    fax AS fax,
+    1 AS `primary`,
+    FROM_UNIXTIME(NOW()) AS updated
+  FROM odata_focal_point a;
+
+
+-- informea_contacts_treaties
+CREATE OR REPLACE DEFINER =`informea`@`localhost` SQL SECURITY DEFINER VIEW `informea_contacts_treaties` AS
+  SELECT
+    CONCAT(id, '-cms'),
+    id AS contact_id,
+    'cms' AS treaty
+  FROM `informea_contacts`;
