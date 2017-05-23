@@ -512,5 +512,5 @@ CREATE OR REPLACE VIEW `informea_contacts_treaties` AS
   SELECT
     CONCAT(id, '-ascobans') as id,
     id AS contact_id,
-    'cms' AS treaty
+    'ascobans' AS treaty
   FROM `informea_contacts`;
