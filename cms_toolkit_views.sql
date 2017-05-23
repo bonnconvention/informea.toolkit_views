@@ -500,7 +500,7 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
 
 
 -- CONTACTS (Focal Points)
-CREATE OR REPLACE DEFINER =`informea`@`localhost` SQL SECURITY DEFINER VIEW `informea_contacts` AS
+CREATE OR REPLACE VIEW `informea_contacts` AS
   SELECT
     dn AS id,
     country_post_iso2 AS country,
@@ -521,7 +521,7 @@ CREATE OR REPLACE DEFINER =`informea`@`localhost` SQL SECURITY DEFINER VIEW `inf
 
 
 -- informea_contacts_treaties
-CREATE OR REPLACE DEFINER =`informea`@`localhost` SQL SECURITY DEFINER VIEW `informea_contacts_treaties` AS
+CREATE OR REPLACE VIEW `informea_contacts_treaties` AS
   SELECT
     CONCAT(id, '-cms'),
     id AS contact_id,
