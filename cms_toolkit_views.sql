@@ -503,7 +503,7 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
 CREATE OR REPLACE VIEW `informea_contacts` AS
   SELECT
     dn AS id,
-    country_post_iso2 AS country,
+    country_iso2 AS country,
     '' AS prefix,
     first_name AS firstName,
     last_name AS lastName,
