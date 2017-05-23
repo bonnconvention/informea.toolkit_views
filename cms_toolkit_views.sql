@@ -517,7 +517,7 @@ CREATE OR REPLACE DEFINER =`informea`@`localhost` SQL SECURITY DEFINER VIEW `inf
     fax AS fax,
     1 AS `primary`,
     FROM_UNIXTIME(NOW()) AS updated
-  FROM odata_focal_point a;
+  FROM `edw_cms_drupal`.odata_focal_point a;
 
 
 -- informea_contacts_treaties
