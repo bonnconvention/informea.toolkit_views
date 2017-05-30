@@ -153,7 +153,9 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     date_format(from_unixtime(a.created), '%Y-%m-%d %H:%i:%s') AS updated,
     g.id_meeting                                               AS meetingId,
     NULL                                                       AS meetingTitle,
-    NULL                                                       AS meetingUrl
+    NULL                                                       AS meetingUrl,
+    dg.weight                                                  AS displayOrder,
+    a.nid
   FROM `edw_ascobans_drupal`.node a
     INNER JOIN `edw_ascobans_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
     INNER JOIN `edw_ascobans_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
@@ -164,6 +166,7 @@ CREATE OR REPLACE DEFINER =`edw_ascob_drupal`@`localhost`
     INNER JOIN `edw_ascobans_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
     INNER JOIN `edw_ascobans_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
     INNER JOIN informea_decisions_cop_documents g ON g.id_document = a.nid
+    LEFT JOIN `edw_cms_drupal`.draggableviews_structure dg ON (dg.view_name = 'meeting_documents_list_reorder' AND dg.entity_id = a.nid)
   WHERE
     a.status = 1
     AND a.`type` = 'document'
