@@ -1,3 +1,44 @@
+-- Helper view
+CREATE OR REPLACE VIEW informea_treaty_machine_name AS
+  SELECT
+    nid,
+    uuid,
+    CASE
+    WHEN nid = 1 THEN 'cms'
+    WHEN nid = 2 THEN 'aewa'
+    WHEN nid = 3 THEN 'eurobats'
+    WHEN nid = 4 THEN 'ascobans'
+    WHEN nid = 5 THEN 'accobams'
+    WHEN nid = 6 THEN 'wadden-sea-seals'
+    WHEN nid = 7 THEN 'acap'
+    WHEN nid = 8 THEN 'gorilla'
+    WHEN nid = 9 THEN 'siberian-crane'
+    WHEN nid = 10 THEN 'slender-billed-curlew'
+    WHEN nid = 11 THEN 'middle-european-great-bustard'
+    WHEN nid = 12 THEN 'atlantic-turtles'
+    WHEN nid = 13 THEN 'iosea-marine-turtles'
+    WHEN nid = 14 THEN 'bukhara-deer'
+    WHEN nid = 15 THEN 'aquatic-warbler'
+    WHEN nid = 16 THEN 'west-african-elephants'
+    WHEN nid = 17 THEN 'saiga-antelope'
+    WHEN nid = 18 THEN 'pacific-inslands-cetaceans'
+    WHEN nid = 19 THEN 'ruddy-headed-goose'
+    WHEN nid = 20 THEN 'southern-south-american-grassland-birds'
+    WHEN nid = 21 THEN 'monk-seal-atlantic'
+    WHEN nid = 22 THEN 'dugong'
+    WHEN nid = 23 THEN 'western-african-aquatic-mammals'
+    WHEN nid = 24 THEN 'birds-of-prey'
+    WHEN nid = 25 THEN 'high-andean-flamingos'
+    WHEN nid = 26 THEN 'sharks'
+    WHEN nid = 27 THEN 'south-andean-huemul'
+    ELSE
+      NULL
+    END treaty,
+    title
+  FROM `edw_cms_drupal`.node
+  WHERE `type` = 'legal_instrument';
+
+
 -- Meetings
 
 -- informea_meetings
@@ -278,24 +319,6 @@ CREATE OR REPLACE DEFINER =`edw_aewa_drupal`@`localhost`
     b.title
   FROM informea_country_reports a INNER JOIN `edw_aewa_drupal`.node b ON a.id = b.uuid;
 
---
--- Document schema
---
-CREATE OR REPLACE VIEW informea_treaty_machine_name AS
-  SELECT
-    nid,
-    uuid,
-    CASE
-    WHEN nid = 1 THEN 'cms'
-    WHEN nid = 2 THEN 'aewa'
-    WHEN nid = 3 THEN 'eurobats'
-    WHEN nid = 4 THEN 'ascobans'
-    ELSE
-      NULL
-    END treaty,
-    title
-  FROM `edw_aewa_drupal`.node
-  WHERE `type` = 'legal_instrument' AND node.nid IN (1, 2, 3, 4);
 
 --
 -- Document entity view
@@ -306,24 +329,35 @@ CREATE OR REPLACE VIEW informea_documents AS
     node.uuid id,
     CONVERT(field_publication_published_date_timestamp, DATE) AS published,
     FROM_UNIXTIME(node.changed) updated,
-    treaty.treaty,
+    NULL AS treaty,
     REPLACE(thumbnails.uri, 'public://', 'http://www.unep-aewa.org/sites/default/files/') thumbnailUrl,
     0 displayOrder,
     UPPER(ciso.field_country_iso3_value) country,
     node.nid
   FROM `edw_aewa_drupal`.node node
     LEFT JOIN `edw_aewa_drupal`.field_data_field_publication_published_date pdate ON node.nid = pdate.entity_id
-    INNER JOIN `edw_aewa_drupal`.field_data_field_instrument instr ON node.nid = instr.entity_id
-    INNER JOIN informea_treaty_machine_name treaty ON (treaty.nid = instr.field_instrument_target_id AND instr.entity_type = 'node')
     LEFT JOIN `edw_aewa_drupal`.field_data_field_publication_image img ON node.nid = img.entity_id
     LEFT JOIN `edw_aewa_drupal`.file_managed thumbnails ON field_publication_image_fid = thumbnails.fid
     LEFT JOIN `edw_aewa_drupal`.field_data_field_country country ON country.entity_id = node.nid
     LEFT JOIN `edw_aewa_drupal`.field_data_field_country_iso3 ciso ON country.field_country_target_id = ciso.entity_id
   WHERE
-    treaty IS NOT NULL
-    AND node.type = 'publication'
+    node.type = 'publication'
     AND node.status = 1
   GROUP BY node.nid;
+
+
+--
+-- Documents `treaties` navigation property
+--
+CREATE OR REPLACE VIEW `informea_documents_treaties` AS
+  SELECT
+    CAST(concat(a.ID, '-', treaty.treaty) AS CHAR) AS `id`,
+    CAST(a.ID AS CHAR) AS document_id,
+    treaty.treaty AS treaty,
+    a.nid
+  FROM `informea_documents` a
+  INNER JOIN `edw_aewa_drupal`.field_data_field_instrument instr ON a.nid = instr.entity_id
+  INNER JOIN informea_treaty_machine_name treaty ON (treaty.nid = instr.field_instrument_target_id AND instr.entity_type = 'node');
 
 
 --
@@ -382,7 +416,7 @@ CREATE OR REPLACE VIEW informea_documents_keywords AS
 --
 -- Documents `titles` navigation property
 --
-CREATE OR REPLACE VIEW informea_documents_titles AS
+CREATE OR REPLACE VIEW informea_documents_title AS
   SELECT
     CONCAT(a.nid, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END) id,
     a.id document_id,
@@ -395,7 +429,7 @@ CREATE OR REPLACE VIEW informea_documents_titles AS
 --
 -- Documents `descriptions` navigation property
 --
-CREATE OR REPLACE VIEW informea_documents_descriptions AS
+CREATE OR REPLACE VIEW informea_documents_description AS
   SELECT
     CONCAT(a.id, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END) AS id,
     a.id document_id,
