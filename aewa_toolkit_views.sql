@@ -170,7 +170,7 @@ CREATE OR REPLACE VIEW `informea_decisions` AS
   GROUP BY a.uuid;
 
 -- informea_decisions_content
-CREATE OR REPLACE `informea_decisions_content` AS
+CREATE OR REPLACE VIEW `informea_decisions_content` AS
   SELECT
     NULL AS id,
     NULL AS decision_id,
