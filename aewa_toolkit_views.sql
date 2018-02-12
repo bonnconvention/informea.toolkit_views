@@ -189,8 +189,6 @@ CREATE OR REPLACE VIEW `informea_decisions_documents` AS
   FROM `edw_aewa_drupal`.node a
     INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
     INNER JOIN `edw_aewa_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
@@ -240,8 +238,6 @@ CREATE OR REPLACE VIEW `informea_decisions_title` AS
   FROM `edw_aewa_drupal`.node a
     INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_status c ON c.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data c1 ON c.field_document_status_tid = c1.tid
     INNER JOIN `edw_aewa_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
