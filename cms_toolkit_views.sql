@@ -516,7 +516,7 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
 -- CONTACTS (Focal Points)
 CREATE OR REPLACE VIEW `informea_contacts` AS
   SELECT
-    dn AS id,
+    MD5(dn) AS id,
     country_iso2 AS country,
     '' AS prefix,
     first_name AS firstName,
