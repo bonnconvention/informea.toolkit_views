@@ -36,7 +36,7 @@ CREATE OR REPLACE VIEW informea_treaty_machine_name AS
     END treaty,
     title
   FROM `edw_cms_drupal`.node
-  WHERE `type` = 'legal_instrument';
+  WHERE `type` = 'legal_instrument' AND nid IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27);
 
 
 -- Meetings
@@ -133,12 +133,13 @@ CREATE OR REPLACE VIEW `informea_decisions_cop_documents` AS
 
 
 -- informea_decisions
+-- Resolution: 1332, Recommendation: 1334, Decision: 1335
 CREATE OR REPLACE VIEW `informea_decisions` AS
   SELECT
     a.uuid                                                     AS id,
     CONCAT('http://www.unep-aewa.org/node/', a.nid)        AS link,
-    CASE b1.name WHEN 'resolutions' THEN 'resolution'
-      WHEN 'recommendations' THEN 'recommendation'
+    CASE b.field_document_type_tid WHEN 1332 THEN 'resolution'
+      WHEN 1334 THEN 'recommendation'
       ELSE 'decision'
     END                                                        AS `type`,
     'Adopted'                                                  AS `status`,
@@ -153,7 +154,6 @@ CREATE OR REPLACE VIEW `informea_decisions` AS
     a.nid
   FROM `edw_aewa_drupal`.node a
     INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
     INNER JOIN `edw_aewa_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
@@ -163,7 +163,7 @@ CREATE OR REPLACE VIEW `informea_decisions` AS
   WHERE
     a.status = 1
     AND a.`type` = 'document'
-    AND LOWER(b1.name) IN ('resolutions', 'recommendations', 'decisions')
+    AND LOWER(b.field_document_type_tid) IN (1332, 1334, 1335)
     AND LOWER(e1.title) IN ('aewa')
   GROUP BY a.uuid;
 
@@ -248,6 +248,7 @@ CREATE OR REPLACE VIEW `informea_decisions_title` AS
 -- COUNTRY REPORTS (National Reports)
 
 -- informea_country_reports
+-- National Report: 1336
 CREATE OR REPLACE VIEW `informea_country_reports` AS
   SELECT
     a.uuid                                                     AS id,
@@ -258,14 +259,13 @@ CREATE OR REPLACE VIEW `informea_country_reports` AS
     date_format(from_unixtime(a.created), '%Y-%m-%d %H:%i:%s') AS updated
   FROM `edw_aewa_drupal`.node a
     INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
     INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
     INNER JOIN `edw_aewa_drupal`.field_data_field_country g ON (g.entity_id = a.nid AND g.bundle = 'document')
     INNER JOIN `edw_aewa_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
   WHERE
     a.`type` = 'document'
-    AND LOWER(b1.name) IN ('national report', 'national reports')
+    AND LOWER(b.field_document_type_tid) IN (1336)
   GROUP BY a.uuid;
 
 -- informea_country_reports_documents
