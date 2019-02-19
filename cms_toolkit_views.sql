@@ -39,7 +39,7 @@ CREATE OR REPLACE VIEW informea_treaty_machine_name AS
     END treaty,
     title
   FROM `edw_cms_drupal`.node
-  WHERE `type` = 'legal_instrument';
+  WHERE `type` = 'legal_instrument' AND nid IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30);
 
 -- Meetings
 
@@ -333,9 +333,10 @@ CREATE OR REPLACE VIEW informea_documents AS
     LEFT JOIN `edw_cms_drupal`.file_managed thumbnails ON field_publication_image_fid = thumbnails.fid
     LEFT JOIN `edw_cms_drupal`.field_data_field_country country ON (country.entity_id = node.nid AND country.bundle = 'publication')
     LEFT JOIN `edw_cms_drupal`.field_data_field_country_iso3 ciso ON country.field_country_target_id = ciso.entity_id
+    INNER JOIN `edw_cms_drupal`.field_data_field_instrument instr ON node.nid = instr.entity_id
   WHERE
     node.type = 'publication'
-  GROUP BY node.nid;
+  GROUP BY node.uuid;
 
 
 --
