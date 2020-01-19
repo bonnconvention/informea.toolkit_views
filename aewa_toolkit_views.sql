@@ -35,7 +35,7 @@ CREATE OR REPLACE VIEW informea_treaty_machine_name AS
       NULL
     END treaty,
     title
-  FROM `edw_cms_drupal`.node
+  FROM `prod_cms`.node
   WHERE `type` = 'legal_instrument' AND nid IN (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27);
 
 
@@ -63,22 +63,22 @@ CREATE OR REPLACE VIEW `informea_meetings` AS
     k.field_meeting_longitude_value                            AS longitude,
     date_format(from_unixtime(a.changed), '%Y-%m-%d %H:%i:%s') AS updated
   FROM
-    `edw_aewa_drupal`.node a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_instrument instr ON a.nid = instr.entity_id
-    LEFT JOIN `edw_aewa_drupal`.node instr_name ON instr.field_instrument_target_id = instr_name.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_event_calendar_date b ON a.nid = b.entity_id
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_meeting_kind d ON a.nid = d.entity_id
-    LEFT JOIN `edw_aewa_drupal`.taxonomy_term_data d1 ON d.field_meeting_kind_tid = d1.tid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_meeting_type e ON a.nid = e.entity_id
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data e1 ON e.field_meeting_type_tid = e1.tid
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_meeting_status f ON a.nid = f.entity_id
-    LEFT JOIN `edw_aewa_drupal`.taxonomy_term_data f1 ON f.field_meeting_status_tid = f1.tid
-    LEFT JOIN `edw_aewa_drupal`.field_revision_field_meeting_location g ON a.nid = g.entity_id
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_meeting_city h ON a.nid = h.entity_id
-    INNER JOIN `edw_aewa_drupal`.field_data_field_country i ON (i.entity_id = a.nid AND i.bundle = 'meeting')
-    INNER JOIN `edw_aewa_drupal`.field_data_field_country_iso2 i1 ON i.field_country_target_id = i1.entity_id
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_meeting_latitude j ON a.nid = j.entity_id
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_meeting_longitude k ON a.nid = k.entity_id
+    `prod_aewa`.node a
+    INNER JOIN `prod_aewa`.field_data_field_instrument instr ON a.nid = instr.entity_id
+    LEFT JOIN `prod_aewa`.node instr_name ON instr.field_instrument_target_id = instr_name.nid
+    INNER JOIN `prod_aewa`.field_data_event_calendar_date b ON a.nid = b.entity_id
+    LEFT JOIN `prod_aewa`.field_data_field_meeting_kind d ON a.nid = d.entity_id
+    LEFT JOIN `prod_aewa`.taxonomy_term_data d1 ON d.field_meeting_kind_tid = d1.tid
+    INNER JOIN `prod_aewa`.field_data_field_meeting_type e ON a.nid = e.entity_id
+    INNER JOIN `prod_aewa`.taxonomy_term_data e1 ON e.field_meeting_type_tid = e1.tid
+    LEFT JOIN `prod_aewa`.field_data_field_meeting_status f ON a.nid = f.entity_id
+    LEFT JOIN `prod_aewa`.taxonomy_term_data f1 ON f.field_meeting_status_tid = f1.tid
+    LEFT JOIN `prod_aewa`.field_revision_field_meeting_location g ON a.nid = g.entity_id
+    LEFT JOIN `prod_aewa`.field_data_field_meeting_city h ON a.nid = h.entity_id
+    INNER JOIN `prod_aewa`.field_data_field_country i ON (i.entity_id = a.nid AND i.bundle = 'meeting')
+    INNER JOIN `prod_aewa`.field_data_field_country_iso2 i1 ON i.field_country_target_id = i1.entity_id
+    LEFT JOIN `prod_aewa`.field_data_field_meeting_latitude j ON a.nid = j.entity_id
+    LEFT JOIN `prod_aewa`.field_data_field_meeting_longitude k ON a.nid = k.entity_id
   WHERE
     a.status = 1
     AND a.`type` = 'meeting'
@@ -93,8 +93,8 @@ CREATE OR REPLACE VIEW `informea_meetings_description` AS
     a.uuid                AS meeting_id,
     'en'                  AS `language`,
     b.body_value          AS description
-  FROM `edw_aewa_drupal`.node a
-    INNER JOIN `edw_aewa_drupal`.field_data_body b ON a.nid = b.entity_id
+  FROM `prod_aewa`.node a
+    INNER JOIN `prod_aewa`.field_data_body b ON a.nid = b.entity_id
   WHERE
     a.status = 1
     AND b.body_value IS NOT NULL
@@ -108,7 +108,7 @@ CREATE OR REPLACE VIEW `informea_meetings_title` AS
     a.uuid                AS meeting_id,
     'en'                  AS 'language',
     a.title
-  FROM `edw_aewa_drupal`.node a
+  FROM `prod_aewa`.node a
   WHERE
     a.status = 1
     AND a.`type` = 'meeting';
@@ -122,10 +122,10 @@ CREATE OR REPLACE VIEW `informea_decisions_cop_documents` AS
     a.uuid      AS id_meeting,
     h.entity_id AS id_document
   FROM
-    `edw_aewa_drupal`.node a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_meeting_type f ON a.nid = f.entity_id
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data g ON f.field_meeting_type_tid = g.tid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_meeting h ON h.field_document_meeting_target_id = a.nid
+    `prod_aewa`.node a
+    INNER JOIN `prod_aewa`.field_data_field_meeting_type f ON a.nid = f.entity_id
+    INNER JOIN `prod_aewa`.taxonomy_term_data g ON f.field_meeting_type_tid = g.tid
+    INNER JOIN `prod_aewa`.field_data_field_document_meeting h ON h.field_document_meeting_target_id = a.nid
   WHERE
     a.status = 1
     AND a.`type` = 'meeting'
@@ -152,14 +152,14 @@ CREATE OR REPLACE VIEW `informea_decisions` AS
     NULL                                                       AS meetingUrl,
     dg.weight                                                  AS displayOrder,
     a.nid
-  FROM `edw_aewa_drupal`.node a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
+  FROM `prod_aewa`.node a
+    INNER JOIN `prod_aewa`.field_data_field_document_type b ON b.entity_id = a.nid
+    INNER JOIN `prod_aewa`.field_data_field_document_number d ON d.entity_id = a.nid
+    INNER JOIN `prod_aewa`.field_data_field_instrument e ON e.entity_id = a.nid
+    INNER JOIN `prod_aewa`.node e1 ON e.field_instrument_target_id = e1.nid
+    INNER JOIN `prod_aewa`.field_data_field_document_publish_date f ON f.entity_id = a.nid
     INNER JOIN informea_decisions_cop_documents g ON g.id_document = a.nid
-    LEFT JOIN `edw_cms_drupal`.draggableviews_structure dg ON (dg.view_name = 'meeting_documents_list_reorder' AND dg.entity_id = a.nid)
+    LEFT JOIN `prod_cms`.draggableviews_structure dg ON (dg.view_name = 'meeting_documents_list_reorder' AND dg.entity_id = a.nid)
   WHERE
     a.status = 1
     AND a.`type` = 'document'
@@ -186,15 +186,15 @@ CREATE OR REPLACE VIEW `informea_decisions_documents` AS
     f2.filemime                                                                               AS mimeType,
     f1.`language`                                                                             AS `language`,
     f2.filename                                                                               AS filename
-  FROM `edw_aewa_drupal`.node a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_files f ON f.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
-    INNER JOIN `edw_aewa_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
+  FROM `prod_aewa`.node a
+    INNER JOIN `prod_aewa`.field_data_field_document_type b ON b.entity_id = a.nid
+    INNER JOIN `prod_aewa`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
+    INNER JOIN `prod_aewa`.field_data_field_document_number d ON d.entity_id = a.nid
+    INNER JOIN `prod_aewa`.field_data_field_instrument e ON e.entity_id = a.nid
+    INNER JOIN `prod_aewa`.node e1 ON e.field_instrument_target_id = e1.nid
+    INNER JOIN `prod_aewa`.field_data_field_document_files f ON f.entity_id = a.nid
+    INNER JOIN `prod_aewa`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
+    INNER JOIN `prod_aewa`.file_managed f2 ON f2.fid = f1.field_document_file_fid
   WHERE
     a.status = 1
     AND a.`type` = 'document'    AND LOWER(b1.name) IN ('resolution', 'resolutions', 'recommendation', 'decision')
@@ -235,12 +235,12 @@ CREATE OR REPLACE VIEW `informea_decisions_title` AS
     a.uuid                    AS decision_id,
     'en'                      AS `language`,
     a.title                   AS title
-  FROM `edw_aewa_drupal`.node a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_number d ON d.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.node e1 ON e.field_instrument_target_id = e1.nid
+  FROM `prod_aewa`.node a
+    INNER JOIN `prod_aewa`.field_data_field_document_type b ON b.entity_id = a.nid
+    INNER JOIN `prod_aewa`.taxonomy_term_data b1 ON b.field_document_type_tid = b1.tid
+    INNER JOIN `prod_aewa`.field_data_field_document_number d ON d.entity_id = a.nid
+    INNER JOIN `prod_aewa`.field_data_field_instrument e ON e.entity_id = a.nid
+    INNER JOIN `prod_aewa`.node e1 ON e.field_instrument_target_id = e1.nid
   WHERE
     a.status = 1
     AND a.`type` = 'document';
@@ -257,12 +257,12 @@ CREATE OR REPLACE VIEW `informea_country_reports` AS
     f.field_document_publish_date_value                        AS submission,
     CONCAT('http://www.unep-aewa.org/node/', a.nid)                  AS url,
     date_format(from_unixtime(a.created), '%Y-%m-%d %H:%i:%s') AS updated
-  FROM `edw_aewa_drupal`.node a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_type b ON b.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_instrument e ON e.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_publish_date f ON f.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_country g ON (g.entity_id = a.nid AND g.bundle = 'document')
-    INNER JOIN `edw_aewa_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
+  FROM `prod_aewa`.node a
+    INNER JOIN `prod_aewa`.field_data_field_document_type b ON b.entity_id = a.nid
+    INNER JOIN `prod_aewa`.field_data_field_instrument e ON e.entity_id = a.nid
+    INNER JOIN `prod_aewa`.field_data_field_document_publish_date f ON f.entity_id = a.nid
+    INNER JOIN `prod_aewa`.field_data_field_country g ON (g.entity_id = a.nid AND g.bundle = 'document')
+    INNER JOIN `prod_aewa`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
   WHERE
     a.`type` = 'document'
     AND LOWER(b.field_document_type_tid) IN (1336)
@@ -280,13 +280,13 @@ CREATE OR REPLACE VIEW `informea_country_reports_documents` AS
       ELSE f1.`language`
     END                                                        AS `language`,
     f2.filename AS filename
-  FROM `edw_aewa_drupal`.node n
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_type dt ON n.nid = dt.entity_id
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_files f ON f.entity_id = n.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
-    INNER JOIN `edw_aewa_drupal`.file_managed f2 ON f2.fid = f1.field_document_file_fid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_country g ON (g.entity_id = n.nid AND g.bundle = 'document')
-    INNER JOIN `edw_aewa_drupal`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
+  FROM `prod_aewa`.node n
+    INNER JOIN `prod_aewa`.field_data_field_document_type dt ON n.nid = dt.entity_id
+    INNER JOIN `prod_aewa`.field_data_field_document_files f ON f.entity_id = n.nid
+    INNER JOIN `prod_aewa`.field_data_field_document_file f1 ON f1.entity_id = f.field_document_files_value
+    INNER JOIN `prod_aewa`.file_managed f2 ON f2.fid = f1.field_document_file_fid
+    INNER JOIN `prod_aewa`.field_data_field_country g ON (g.entity_id = n.nid AND g.bundle = 'document')
+    INNER JOIN `prod_aewa`.field_data_field_country_iso3 h ON g.field_country_target_id = h.entity_id
   WHERE
     n.type ='document'
     AND n.status = 1
@@ -300,7 +300,7 @@ CREATE OR REPLACE VIEW `informea_country_reports_title` AS
     id                AS country_report_id,
     'en'              AS 'language',
     b.title
-  FROM informea_country_reports a INNER JOIN `edw_aewa_drupal`.node b ON a.id = b.uuid;
+  FROM informea_country_reports a INNER JOIN `prod_aewa`.node b ON a.id = b.uuid;
 
 
 --
@@ -317,12 +317,12 @@ CREATE OR REPLACE VIEW informea_documents AS
     0 displayOrder,
     UPPER(ciso.field_country_iso3_value) country,
     node.nid
-  FROM `edw_aewa_drupal`.node node
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_publication_published_date pdate ON node.nid = pdate.entity_id
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_publication_image img ON node.nid = img.entity_id
-    LEFT JOIN `edw_aewa_drupal`.file_managed thumbnails ON field_publication_image_fid = thumbnails.fid
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_country country ON country.entity_id = node.nid
-    LEFT JOIN `edw_aewa_drupal`.field_data_field_country_iso3 ciso ON country.field_country_target_id = ciso.entity_id
+  FROM `prod_aewa`.node node
+    LEFT JOIN `prod_aewa`.field_data_field_publication_published_date pdate ON node.nid = pdate.entity_id
+    LEFT JOIN `prod_aewa`.field_data_field_publication_image img ON node.nid = img.entity_id
+    LEFT JOIN `prod_aewa`.file_managed thumbnails ON field_publication_image_fid = thumbnails.fid
+    LEFT JOIN `prod_aewa`.field_data_field_country country ON country.entity_id = node.nid
+    LEFT JOIN `prod_aewa`.field_data_field_country_iso3 ciso ON country.field_country_target_id = ciso.entity_id
   WHERE
     node.type = 'publication'
     AND node.status = 1
@@ -339,7 +339,7 @@ CREATE OR REPLACE VIEW `informea_documents_treaties` AS
     treaty.treaty AS treaty,
     a.nid
   FROM `informea_documents` a
-  INNER JOIN `edw_aewa_drupal`.field_data_field_instrument instr ON a.nid = instr.entity_id
+  INNER JOIN `prod_aewa`.field_data_field_instrument instr ON a.nid = instr.entity_id
   INNER JOIN informea_treaty_machine_name treaty ON (treaty.nid = instr.field_instrument_target_id AND instr.entity_type = 'node');
 
 
@@ -363,8 +363,8 @@ CREATE OR REPLACE VIEW informea_documents_types AS
       tb.name
     END `value`
   FROM informea_documents a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_publication_type b ON a.nid = b.entity_id
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data tb ON b.field_publication_type_tid = tb.tid
+    INNER JOIN `prod_aewa`.field_data_field_publication_type b ON a.nid = b.entity_id
+    INNER JOIN `prod_aewa`.taxonomy_term_data tb ON b.field_publication_type_tid = tb.tid
   WHERE tb.tid IN (223, 224, 226, 369) ORDER BY document_id;
 
 --
@@ -377,8 +377,8 @@ CREATE OR REPLACE VIEW informea_documents_authors AS
     NULL `type`,
     tb.name
   FROM informea_documents a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_publication_author b ON a.nid = b.entity_id
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data tb ON tb.tid = b.field_publication_author_tid;
+    INNER JOIN `prod_aewa`.field_data_field_publication_author b ON a.nid = b.entity_id
+    INNER JOIN `prod_aewa`.taxonomy_term_data tb ON tb.tid = b.field_publication_author_tid;
 
 --
 -- Documents `keywords` navigation property
@@ -392,9 +392,9 @@ CREATE OR REPLACE VIEW informea_documents_keywords AS
     td.name AS literalForm,
     'http://www.informea.org/terms' AS sourceURL
   FROM informea_documents a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_cms_tags tags ON tags.entity_id = a.nid
-    INNER JOIN `edw_aewa_drupal`.field_data_field_related_informea_terms itags ON tags.field_cms_tags_tid = itags.entity_id
-    INNER JOIN `edw_aewa_drupal`.taxonomy_term_data td ON itags.field_related_informea_terms_target_id = td.tid;
+    INNER JOIN `prod_aewa`.field_data_field_cms_tags tags ON tags.entity_id = a.nid
+    INNER JOIN `prod_aewa`.field_data_field_related_informea_terms itags ON tags.field_cms_tags_tid = itags.entity_id
+    INNER JOIN `prod_aewa`.taxonomy_term_data td ON itags.field_related_informea_terms_target_id = td.tid;
 
 --
 -- Documents `titles` navigation property
@@ -406,7 +406,7 @@ CREATE OR REPLACE VIEW informea_documents_title AS
     CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END `language`,
     b.title_field_value `value`
   FROM informea_documents a
-    INNER JOIN `edw_aewa_drupal`.field_data_title_field b ON a.nid = b.entity_id
+    INNER JOIN `prod_aewa`.field_data_title_field b ON a.nid = b.entity_id
   GROUP BY CONCAT(a.nid, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END);
 
 --
@@ -419,7 +419,7 @@ CREATE OR REPLACE VIEW informea_documents_description AS
     CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END `language`,
     b.body_value `value`
   FROM informea_documents a
-    INNER JOIN `edw_aewa_drupal`.field_data_body b ON a.nid = b.entity_id
+    INNER JOIN `prod_aewa`.field_data_body b ON a.nid = b.entity_id
   GROUP BY CONCAT(a.id, '-', CASE WHEN b.language = 'und' THEN 'en' ELSE b.language END);
 
 --
@@ -447,8 +447,8 @@ CREATE OR REPLACE VIEW informea_documents_files AS
     CASE WHEN f.language = 'und' THEN 'en' ELSE f.language END `language`,
     files.filename
   FROM informea_documents a
-    INNER JOIN `edw_aewa_drupal`.field_data_field_publication_attachment f ON a.nid = f.entity_id
-    INNER JOIN `edw_aewa_drupal`.file_managed files ON f.field_publication_attachment_fid = files.fid
+    INNER JOIN `prod_aewa`.field_data_field_publication_attachment f ON a.nid = f.entity_id
+    INNER JOIN `prod_aewa`.file_managed files ON f.field_publication_attachment_fid = files.fid
   GROUP BY files.fid;
 
 --
@@ -476,8 +476,8 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
       NULL AS refId
     FROM
       informea_documents a
-      JOIN `edw_aewa_drupal`.field_data_field_publication_meeting b ON a.nid = b.entity_id
-      JOIN `edw_aewa_drupal`.node bn ON (b.field_publication_meeting_target_id = bn.nid AND bn.type = 'meeting')
+      JOIN `prod_aewa`.field_data_field_publication_meeting b ON a.nid = b.entity_id
+      JOIN `prod_aewa`.node bn ON (b.field_publication_meeting_target_id = bn.nid AND bn.type = 'meeting')
     GROUP BY bn.nid
   UNION
     SELECT
@@ -487,8 +487,8 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
       NULL AS refId
     FROM
       informea_documents a
-      JOIN `edw_aewa_drupal`.field_data_field_publication_plans b ON a.nid = b.entity_id
-      JOIN `edw_aewa_drupal`.node bn ON (b.field_publication_plans_target_id = bn.nid and (bn.type = 'document'))
+      JOIN `prod_aewa`.field_data_field_publication_plans b ON a.nid = b.entity_id
+      JOIN `prod_aewa`.node bn ON (b.field_publication_plans_target_id = bn.nid and (bn.type = 'document'))
     GROUP BY bn.nid
   UNION
     SELECT
@@ -498,8 +498,8 @@ CREATE OR REPLACE VIEW `informea_documents_references` AS
       NULL AS refId
     FROM
       informea_documents a
-      JOIN `edw_aewa_drupal`.field_data_field_publication_nat_report b ON a.nid = b.entity_id
-      JOIN `edw_aewa_drupal`.node bn ON (b.field_publication_nat_report_target_id = bn.nid AND bn.type = 'document')
+      JOIN `prod_aewa`.field_data_field_publication_nat_report b ON a.nid = b.entity_id
+      JOIN `prod_aewa`.node bn ON (b.field_publication_nat_report_target_id = bn.nid AND bn.type = 'document')
     GROUP BY bn.nid;
 
 
@@ -521,7 +521,7 @@ CREATE OR REPLACE VIEW `informea_contacts` AS
     fax AS fax,
     1 AS `primary`,
     FROM_UNIXTIME(NOW()) AS updated
-  FROM `edw_aewa_drupal`.odata_focal_point a;
+  FROM `prod_aewa`.odata_focal_point a;
 
 
 -- informea_contacts_treaties
