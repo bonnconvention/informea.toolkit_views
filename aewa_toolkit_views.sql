@@ -46,7 +46,7 @@ CREATE OR REPLACE VIEW `informea_meetings` AS
   SELECT
     a.uuid                                                     AS id,
     LOWER(instr_name.title)                                    AS treaty,
-    CONCAT('http://www.unep-aewa.org/node/', a.nid)            AS url,
+    CONCAT('https://www.unep-aewa.org/node/', a.nid)            AS url,
     b.event_calendar_date_value                                AS `start`,
     b.event_calendar_date_value2                               AS `end`,
     NULL                                                       AS repetition,
@@ -137,7 +137,7 @@ CREATE OR REPLACE VIEW `informea_decisions_cop_documents` AS
 CREATE OR REPLACE VIEW `informea_decisions` AS
   SELECT
     a.uuid                                                     AS id,
-    CONCAT('http://www.unep-aewa.org/node/', a.nid)        AS link,
+    CONCAT('https://www.unep-aewa.org/node/', a.nid)        AS link,
     CASE b.field_document_type_tid WHEN 1332 THEN 'resolution'
       WHEN 1334 THEN 'recommendation'
       ELSE 'decision'
@@ -182,7 +182,7 @@ CREATE OR REPLACE VIEW `informea_decisions_documents` AS
     CONCAT(a.uuid, '-', f2.fid)                                                               AS id,
     a.uuid                                                                                    AS decision_id,
     CONCAT('/var/local/aewa/www/sites/default/files/', REPLACE(f2.uri, 'public://', ''))      AS diskPath,
-    CONCAT('http://www.unep-aewa.org/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
+    CONCAT('https://www.unep-aewa.org/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
     f2.filemime                                                                               AS mimeType,
     f1.`language`                                                                             AS `language`,
     f2.filename                                                                               AS filename
@@ -255,7 +255,7 @@ CREATE OR REPLACE VIEW `informea_country_reports` AS
     'aewa'                                                      AS treaty,
     UPPER(h.field_country_iso3_value)                          AS country,
     f.field_document_publish_date_value                        AS submission,
-    CONCAT('http://www.unep-aewa.org/node/', a.nid)                  AS url,
+    CONCAT('https://www.unep-aewa.org/node/', a.nid)                  AS url,
     date_format(from_unixtime(a.created), '%Y-%m-%d %H:%i:%s') AS updated
   FROM `prod_aewa`.node a
     INNER JOIN `prod_aewa`.field_data_field_document_type b ON b.entity_id = a.nid
@@ -274,7 +274,7 @@ CREATE OR REPLACE VIEW `informea_country_reports_documents` AS
     CONCAT('en', '-', n.nid) AS id,
     n.uuid AS country_report_id,
     CONCAT('sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS diskPath,
-    CONCAT('http://www.unep-aewa.org/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
+    CONCAT('https://www.unep-aewa.org/sites/default/files/', REPLACE(f2.uri, 'public://', '')) AS url,
     f2.filemime AS mimeType,
     CASE f1.`language` WHEN 'und' THEN 'en'
       ELSE f1.`language`
@@ -313,7 +313,7 @@ CREATE OR REPLACE VIEW informea_documents AS
     CONVERT(field_publication_published_date_timestamp, DATE) AS published,
     FROM_UNIXTIME(node.changed) updated,
     NULL AS treaty,
-    REPLACE(thumbnails.uri, 'public://', 'http://www.unep-aewa.org/sites/default/files/') thumbnailUrl,
+    REPLACE(thumbnails.uri, 'public://', 'https://www.unep-aewa.org/sites/default/files/') thumbnailUrl,
     0 displayOrder,
     UPPER(ciso.field_country_iso3_value) country,
     node.nid
@@ -387,10 +387,10 @@ CREATE OR REPLACE VIEW informea_documents_keywords AS
   SELECT
     CONCAT(a.id, '-', td.tid) AS id,
     a.id document_id,
-    'http://www.informea.org/terms' AS `termURI`,
+    'https://www.informea.org/terms' AS `termURI`,
     'leo' AS scope,
     td.name AS literalForm,
-    'http://www.informea.org/terms' AS sourceURL
+    'https://www.informea.org/terms' AS sourceURL
   FROM informea_documents a
     INNER JOIN `prod_aewa`.field_data_field_cms_tags tags ON tags.entity_id = a.nid
     INNER JOIN `prod_aewa`.field_data_field_related_informea_terms itags ON tags.field_cms_tags_tid = itags.entity_id
@@ -441,7 +441,7 @@ CREATE OR REPLACE VIEW informea_documents_files AS
   SELECT
     files.fid id,
     a.id document_id,
-    REPLACE(files.uri, 'public://', 'http://www.unep-aewa.org/sites/default/files/') url,
+    REPLACE(files.uri, 'public://', 'https://www.unep-aewa.org/sites/default/files/') url,
     NULL content,
     files.filemime AS mimeType,
     CASE WHEN f.language = 'und' THEN 'en' ELSE f.language END `language`,
