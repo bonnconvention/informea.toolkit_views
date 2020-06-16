@@ -203,11 +203,11 @@ CREATE OR REPLACE VIEW `informea_decisions_documents` AS
 -- informea_decisions_keywords
 CREATE OR REPLACE VIEW `informea_decisions_keywords` AS
   SELECT
-    CONCAT(a.id, '-', td.tid) AS id,
-    a.id decision_id,
+    CONCAT(a.uuid, '-', td.tid) AS id,
+    a.uuid decision_id,
     'https://www.informea.org/terms' AS `namespace`,
     td.name AS term
-  FROM informea_decisions a
+  FROM `prod_cms`.node a
     INNER JOIN `prod_cms`.field_data_field_cms_tags tags ON tags.entity_id = a.nid
     INNER JOIN `prod_cms`.field_data_field_related_informea_terms itags ON tags.field_cms_tags_tid = itags.entity_id
     INNER JOIN `prod_cms`.taxonomy_term_data td ON itags.field_related_informea_terms_target_id = td.tid;
